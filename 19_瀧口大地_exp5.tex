@@ -1,0 +1,1391 @@
+\documentclass[12pt]{ltjarticle}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage[hyphens]{url}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{here}
+\usepackage{array}
+\usepackage{geometry}
+\usepackage{microtype}
+\usepackage{fontspec}
+\usepackage{luatexja-fontspec} % 明示的に読み込む
+\usepackage{luatexja}
+\usepackage{titlesec}
+\usepackage{subcaption}
+\usepackage{listings}
+
+% ========== listings の設定 ==========
+\lstset{
+  % フレーム (枠線) の指定：上 (t) と 下 (b) の線だけ
+  frame=tb, 
+  % 枠線とコードの間の余白
+  framesep=5pt, 
+  % 等幅フォントで表示
+  basicstyle=\ttfamily\small, 
+  % 行番号を左側に表示
+  numbers=left,
+  % 行番号の書式を小さく（tiny）する
+  numberstyle=\tiny, 
+  % 行番号とコードの間のスペース
+  numbersep=5pt, 
+  % 行番号の増分 (1行ごと)
+  stepnumber=1, 
+}
+
+% \usepackage{array}
+% \usepackage{booktabs}
+% \geometry{margin=20mm}
+\titleformat{\section}[block]
+  {\normalfont\LARGE\bfseries}
+  {第\thesection 章}{1em}{}
+
+\setmainfont{ipaexm.ttf} % 日本語フォント（IPAex明朝）を指定 ※ XeLaTeX or LuaLaTeXが必要
+\geometry{left=25mm, right=25mm, top=30mm, bottom=30mm} % 余白設定
+\renewcommand{\baselinestretch}{1.2} % 行間を1.2倍に設定
+
+\counterwithin{figure}{section} % 図番号を「1.1」のようにセクションと連動
+\counterwithin{table}{section}  % 表番号も同様にセクションと連動
+
+\makeatletter
+% section 再定義（改ページなし・見た目調整）
+\renewcommand{\section}{%
+  \@startsection{section}{1}{\z@}%
+  {-2.5ex \@plus -1ex \@minus -.2ex}%
+  {1.5ex \@plus.2ex}%
+  {\normalfont\LARGE\bfseries\raggedright}%
+}
+
+% subsection 再定義（見た目だけ調整，番号はそのまま）
+\renewcommand{\subsection}{%
+  \@startsection{subsection}{2}{\z@}%
+  {-1.5ex \@plus -0.5ex \@minus -.2ex}%
+  {1ex \@plus .2ex}%
+  {\normalfont\large\bfseries\raggedright}%
+}
+
+% section 番号だけ「第n章」に変更
+\renewcommand{\thesection}{第\arabic{section}章}
+
+% subsection 番号は従来の n.m 形式を保つ（これが重要）
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+\makeatother
+
+\makeatletter
+% 表番号を「2.1」「2.2」のようにセクション番号と連動
+\renewcommand{\thetable}{\arabic{section}.\arabic{table}}
+% キャプションの前に「表」を表示
+\renewcommand{\tablename}{表}
+% 参照の際にも「表」と表示
+\renewcommand{\refname}{\tablename}
+\renewcommand{\thefigure}{\arabic{section}.\arabic{figure}}
+\renewcommand{\figurename}{図}
+\makeatother
+
+% キャプションの書式設定
+\captionsetup[figure]{labelfont={bf}, labelsep=space, font=small}  % キャプションを小さくし，「図」を太字に設定
+
+% タイトルと著者の設定
+\title{\huge 第5章　サイバーセキュリティ基礎実験2}
+\author{\large 3年情報工学科 19番 瀧口大地}
+  
+\date{} % 日付を空にする
+
+\begin{document}
+
+  \begin{titlepage}
+    \vspace*{\fill}
+    \begin{center}
+      {\Large 情報工学実験 II 第5回レポート}\\
+      \vspace{0.5\baselineskip}
+      {\Huge サイバーセキュリティ基礎実験2}
+    \end{center}
+
+    \vspace{2cm}
+    \begin{LARGE}
+      \begin{center}
+        3年 情報工学科 19番 瀧口大地
+      \end{center}
+    \end{LARGE}
+
+    \begin{large}
+    \vspace{1.5cm}
+    \begin{flushleft}
+      \normalsize
+      提出期限: 2025年12月26日09:00\\
+      提出日: 2025年12月22日23:00
+    \end{flushleft}
+
+    \vspace{1cm}
+    \begin{flushleft}
+      共同実験者:4班\\
+      15番 信宮心尋\\
+      22番 津田俊貴\\
+      27番 松澤吏玖\\
+      31番 村田脩真\\
+      32番 矢口凛央子\\
+      38番 米田絆
+    \end{flushleft}
+    \end{large}
+
+    \vspace*{\fill}
+  \end{titlepage}
+
+  \clearpage
+  \setcounter{page}{1}
+  \pagestyle{plain}
+
+  \newpage
+  \noindent
+  \begin{huge}
+    アブストラクト\\\\
+  \end{huge}
+  本実験では，Webサーバのログに記録される内容と，ログから読み取れることを理解するこ
+  と，SQLコマンドインジェクションの原理を理解し，対策を考えることを目的とする. また，
+  CSIRT の役割とその業務について理解することも目的とする．それに加え，ディレクトリト
+  ラバーサルやOSコマンドインジェクションなどの，他の攻撃についても手法を理解する
+  ことを目的とする． Webサーバのログ解析では，Webサーバのアク
+  セスログのフォーマットを確認した後，実際にアクセスしてどのように記録されるかを確認
+  した．その結果，アクセスログには，接続元のIPアドレス，アクセス日時，リクエストの
+  内容などが記録されていることが分かった．また，Firefox,Chromium,curlコマンドを用い
+  てWebサーバにアクセスし，User-Agentがどのように記録されるかを確認した．その結果，
+  Firefox,Chromium,curl コマンドを用いてアクセスしたときに，ブラウザやアクセス元のOS
+  情報などが記録されていた．さらに，前回の実験で用いたWebサーバS0411,S0412のアク
+  セスログを解析し，アクセス数，アクセス元のIPアドレス数，各IPアドレスのアクセス数
+  を調べた．その結果，WebサーバS0411には，9個のIPアドレスから合計でアクセス数が
+  601 回,Web サーバS0412 には，3個のIPアドレスから合計でアクセス数が53回あった．
+  SQLコマンドインジェクションは，Webサーバーにある3つのフォームの1
+  つに指定されたIDとパスワードを入力し，ログインの可否とアクセスログについて調べた．
+  その結果，正規のIDとパスワード組み合わせと，SQLコマンドインジェクションが実行さ
+  れたときでもログインは成功した．また，その際のアクセスログはパーセントエンコーディ
+  ングがされていた．SQLコマンドインジェクションは，SQL文を構築する際に，ユーザー
+  からの入力をそのまま利用していることが原因で発生すると考えられ，その対策として，プ
+  レースホルダを使用することが挙げられた．それを実装し実験したところ，SQLコマンドイ
+  ンジェクションを防ぐことができた．また，残りの2つのフォームについては,ディレクトリ
+  トラバーサル攻撃とOSコマンドインジェクションが可能であることが分かった．
+  よって，本実験の目的は達成できたと言える．
+  
+  \newpage
+  \noindent
+  % \setcounter{page}{1}
+  \section{実験目的}
+  本実験では，Webサーバのログに記録される内容と，ログから読み取れることを理解するこ
+  と，SQLコマンドインジェクションの原理を理解し，対策を考えることを目的とする. また，
+  CSIRT の役割とその業務について理解することも目的とする．それに加え，ディレクトリト
+  ラバーサルやOSコマンドインジェクションなどのその他の攻撃についても手法を理解する
+  ことも目的とする．
+  
+  \newpage
+  \pagestyle{plain}
+  \section{実験原理}
+  \subsection{Linuxコマンド集}
+  本実験で私又は班員が用いたコマンドについて以下に示す．
+  \subsubsection{tailコマンド}
+  tailコマンドはファイルの末尾を表示するためのコマンドである．
+
+  tailコマンドで/var/log/apache2/ディレクトリ内のaccess.logという
+  ファイルの末尾の10行を表示させるコマンドは次のとおりである．
+
+  \begin{lstlisting}[title={tailコマンドの使用例}]
+    tail /var/log/apache2/access.log
+  \end{lstlisting}
+
+  \subsubsection{catコマンド}
+  catコマンドはファイルの連結や標準出力への出力機能を有したコマンドである．
+
+  access.logを行番号付きで標準出力へと出力するコマンドは次のとおりである．
+
+  \begin{lstlisting}[title={catコマンドの使用例}]
+    cat -n access.log
+  \end{lstlisting}
+
+  このとき，-nオプションを使うと各行に対して行番号を先頭に振る機能を持っている．
+  本実験では，アクセスログでは1行毎にアクセスが記録される特徴を用いてアクセスを分類するために行番号を用いた．
+
+
+  \subsubsection{cutコマンド}
+  cutコマンドは標準出力や，テキストデータを区切りながら抜粋して表示することに用いられるコマンドである．
+
+  特に，任意の区切り文字を指定できる-dオプションや区切られたフィールドを指定する-fオプションなどが一緒に用いられることが多い．
+
+  access.logの各行をスペース毎に区切り，そのうちの1フィールド目のみを指定して取り出す処理は次のとおりである．
+
+  \begin{lstlisting}[title={cutコマンドの使用例}]
+    cat access.log | cut -d ' ' -f 1
+  \end{lstlisting}
+
+  これは，アクセスログの先頭のIPアドレスのみを取り出すなどの処理に用いられることが多い．
+
+  \subsubsection{grepコマンド}
+  grepコマンドはテキストファイルや標準出力に対して，正規表現による探索を行うためのコマンドである．
+
+  特に，否定検索を行うための-vオプションや，一致している行の行番号を表示する-nオプションなどがよく利用される．
+
+  access.logの各行に対して，'10.4.4.1 'を含むかどうかの検索をかけて含む行のみに行番号を降る処理は次のとおりである．
+
+  \begin{lstlisting}[title={grepコマンドの使用例}]
+    cat access.log | grep -n '10.4.4.1 ' 
+  \end{lstlisting}
+
+  また，検索条件には正規表現を含むことができる．
+  特に，行番号をすでにCATコマンドで振ってから40-59行目のみを取り出すという処理を行う際のコマンドは次のとおりである．
+
+  \begin{lstlisting}[title={grepコマンドの応用例}]
+    cat -n access.log grep '^([45][0-9]):'
+  \end{lstlisting}
+
+  非常に細かな検索条件を指定することができるコマンドであるが，本実験では
+  あまり用いていない．
+
+  \subsubsection{uniqコマンド}
+  uniqコマンドは，重複する行を除いてユニークな行に対して処理理を行うためのコマンドである．
+
+  特に，ユニークな行の出現回数をカウントできる-cオプションがよく利用される．
+
+  access.logの先頭のIPアドレスの出現回数をカウントする処理のコマンドは次のとおりである.
+
+  \begin{lstlisting}[title={uniqコマンドの使用例}]
+    cat access.log | cut -d ' ' -f 1 | uniq -c
+  \end{lstlisting}
+
+  uniqコマンドはあくまでもユニークな行に対する処理を行うためのコマンドなので，
+  基本的にuniqコマンドに対して与えられるデータは整形されているデータである必要がある．
+  今回であれば，CUTコマンドであるフィールドのみの値に絞ってuniqコマンドへと標準出力を与えた．
+
+
+  \subsubsection{wcコマンド}
+  wcコマンドは，標準出力やファイルに対して行数のカウント行ったりスペース区切りの単語数カウントが行えたりするコマンドである．
+
+  特に，行数をカウントするための-lオプションがよく利用される．
+
+  access.logのすべての行数をカウントする処理は次のとおりである．
+
+  \begin{lstlisting}[title={wcコマンド}]
+    cat access.log | wc -l
+  \end{lstlisting}
+
+
+  \subsubsection{nkfコマンド}
+  nkfコマンドは，標準出力やファイルに対して文字列エンコードの処理をかけるためのコマンドである．
+
+  特に，URLエンコードをデコードして表示してくれる$--$url-inputがよく利用される．
+
+  access.log内にURLエンコードが含まれる場合，それをデコードした状態で表示する処理のコマンドは次のとおりである．
+
+  \begin{lstlisting}[title={nkfコマンドの使用例}]
+    cat access.log | nkf --url-input
+  \end{lstlisting}
+
+
+  \subsection{Apacheのログフォーマット[1]}
+  \label{subs:log-formats-view}
+
+  Apacheのログはフォーマットにより出力内容が固定される．
+  このフォーマットを指定するにはApacheのコンフィグファイルを編集し，LogFormatディレクティブを編集する必要がある．
+
+  LogFormatディレクレティブは次のとおりである．
+
+  \begin{lstlisting}[title={LogFormatディレクレティブ}]
+    LogFormat "フォーマット文字列" フォーマット名
+  \end{lstlisting}
+
+  このとき，フォーマット文字列で使用される特殊な記号の意味について表\ref{tab:formats}にまとめる．
+
+  \begin{table}[H]
+    \centering
+    \caption{フォーマット文字列の特殊文字}
+    \label{tab:formats}
+    \begin{tabular}{c|c}
+      \hline
+      特殊文字 & 概要 \\
+      \hline
+      \%\% & \%そのものを出力 \\
+      \%u & HTTP上での認証情報 \\
+      \%a & リモートIPアドレス \\
+      \%b & 送信されたバイト数(ヘッダーレス) \\
+      \%h & リモートホスト名 \\
+      \%$>$s & 最後のレスポンスステータス \\
+      \%l & IdentProtocol用の識別子 \\
+      \%r & リクエストの最初の行 \\
+      \%{リクエストヘッダ} & リクエストヘッダ内の値を表示 \\
+      \hline
+    \end{tabular}
+  \end{table}
+
+  実際に以上の特殊文字を組み合わせることで，ログのフォーマットを任意に指定することも可能である．
+  しかし，一般に用いられるフォーマットも存在する．
+  それが，Apacheにデフォルトで登録されているcombinedフォーマットなどである．
+
+  combinedフォーマットについて以下に示す．
+
+  \begin{lstlisting}[title={combinedフォーマット}]
+    %h %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\"
+  \end{lstlisting}
+
+  基本的には，先の表\ref{tab:formats}の内容に従う．
+  実際に記録されるデータの例としては，次のようなものがある．
+
+  \begin{lstlisting}[title={combinedフォーマットの保存例},breaklines=true,breakindent=20pt,basicstyle=\ttfamily,numbers=left]
+  192.168.1.1 - - [10/Jun/2024:10:10:10 +0900] "GET /index.html HTTP/1.1" 200 1024 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36"
+  \end{lstlisting}
+
+  基本的にIdentProtocolは利用されないため，\%lの値は-になることが多い．
+  また，HTTPの認証情報を格納する\%uがあるが，これはあくまでもHTTPのauthenticationヘッダの内容を確認しているだけである．
+  つまり，ユーザIDが設定されていたとしても，ステータスコードが403であれば，認証自体には失敗しているため，認証済みのユーザとしてリクエストしていたのかはこの情報のみでは分からない．
+
+  \subsection{User-Agent[2][3]}
+  User-Agent(以下，UA)とはHTTPヘッダの情報の一つであり，クライアントがどの様なブラウザや製品を使ってサーバへ接続しているのかを示すために作られたヘッダである．
+  そのため，次のようなフォーマットが定められている．
+
+  \begin{lstlisting}[title={UAのフォーマット}]
+    product/productversion (comment)
+  \end{lstlisting}
+
+  このcommentのみが自由記述である．
+
+  この情報がどの様なブラウザからアクセスしているかということをサーバが知るための数少ない情報であるため，数多く利用される．
+  特に，ブラウザごとには大方フォーマットが決まっており，これらを正規表現等で分類することで情報を得ることができる．
+  その一覧を次に示す．
+
+  \begin{lstlisting}[title={FireFoxのUA文字列},breaklines=true,breakindent=20pt,basicstyle=\ttfamily,numbers=left]
+    Mozilla/5.0 (platform; rv:geckoversion) Gecko/geckotrail Firefox/firefoxversion
+  \end{lstlisting}
+
+  \begin{lstlisting}[title={ChromeやChromiumのUA文字列},breaklines=true,breakindent=20pt,basicstyle=\ttfamily,numbers=left]
+    Mozilla/5.0 (platform) AppleWebKit/applewebkitversion (KHTML, like Gecko) Chrome/chromeversion Safari/applewebkitversion
+  \end{lstlisting}
+
+  \begin{lstlisting}[title={OperaのUA文字列},breaklines=true,breakindent=20pt,basicstyle=\ttfamily,numbers=left]
+    Mozilla/5.0 (platform) AppleWebKit/applewebkitversion (KHTML, like Gecko) Chrome/chromeversion Safari/applewebkitversion OPR/oprversion
+  \end{lstlisting}
+
+
+  \subsection{MySQL[4][5]}
+  データを表形式のリレーションで管理することができるリレーショナルデータベースの一つにMySQLが存在する．
+  特に，MySQLでは，一つのデータ集合をテーブルと呼び，テーブルには１行毎のレコードが有り，レコードにはカラムごとのセルがデータを保持するという構造になっている．
+  MySQLには専用の構文解析エンジンが有るため，DDLやDML，DCLを用いてデータベースの定義，権限，CRUD処理などを一元的に行うことができる．
+
+  DMLの一部を紹介する．
+  まず，データの参照である．
+  データの参照にはSELECT文が利用される．
+  FROM句でテーブルを指定し，WHERE句で必要な行の条件を指定する．
+  次に，データの挿入である．
+  データの挿入にはINSERT文が利用される．
+  INTO句でテーブルを指定し，()を用いてカラムの選択，VALUES句に追加したいデータ毎に()でまとめて指定する．
+
+
+  \subsection{SQLコマンドインジェクション攻撃[6]}
+  SQLコマンドインジェクションとは，脆弱性のあるWebアプリケーションやWebフォームなどに特定の文字列を入力した際に成立するデータベースへの攻撃である．
+  具体的には，ログイン処理などをデータベースのみに頼っている場合などは，不正ログインのために利用されたり，プログラム作成者が意図しないようなデータの保存が行われてしまうなどである．
+
+  実際には，動的な値を扱うためのプログラムが，動的な値を既存のSQL文にバインドする際の動作を狙ったものが多く，
+  プログラム言語によって異なるが，シングルクオーテーションやダブルクオーテーションを使って
+  不正な文字列操作を行い誤認識させたり，SQLコマンドにおけるコメントアウトを不正に利用したものが多い．
+
+  対策としては，入力値に対してバリデーションを行い，リクエストに不正な文字列が含まれていた場合はそもそもSQL文にバインドしないという方法や，
+  データベースエンジンやプログラムのデータベース用ライブラリを用いて，静的，動的プレースホルダを利用すること等がある．
+
+  また，当然としてWebアプリケーションなどが持つデータベースへの権限を最小にするなどの根本的な対策も発生時の被害を小さくすることに効果的である．
+
+
+  \subsection{OSコマンドインジェクション攻撃[7]}
+  OSコマンドインジェクションとは，プログラムがシェルに対してコマンドを入力して実行する際に成立しうる攻撃である．
+
+  特に，Pythonのos.system関数であったり，PHPのsystem関数などは，標準の使用方法では，引数の文字列をそのままコマンドとして解釈し，シェル上で実行する．
+  この，文字列をそのまま解釈するというところが問題であり，動的な値の中に，シェルにおける改行を示すコードや，コマンドの区切り文字を含め，続きに不正実行したい文字列を含めることで，
+  プログラム上では一続きのコマンドの引数のように解釈される一方で，シェルでは区切り文字以降がすべて別のコマンドとして解釈されるのである．
+  これにより，Webアプリケーションに割り当てられたユーザの権限の範囲内で自由にコマンドが実行できてしまうという攻撃が成立するのである．
+
+  対策としては，こちらも動的に割り当てる値に対してバリデーションを行い，区切り文字などを含むことを検知すると，リクエストを処理しないという方法や，
+  その値に対してサニタイジングを施すことで，それらの特殊文字をシェル上で無効化(エスケープ処理)するなどの方法がある．
+  特に，PHPには標準でescapeshellarg関数が用意されており，これはシェルではシングルクオーテーションで囲まれた範囲が文字列として認識されるという特徴を活かして，引数として与えられた文字列に対してシングルクオーテーションで囲ったものを返却するという関数である．
+
+
+  \subsection{ディレクトリトラバーサル攻撃[8]}
+  ディレクトリトラバーサル攻撃とは，通常のWebアプリケーションのユーザ権限では到達不可能なディレクトリに存在するファイルやディレクトリにアクセスする攻撃である．
+
+  特に，クラウドストレージサービスなどに代表されるファイルをプレビューする機能などが不正に実装されている際に発生する可能性がある．
+
+  具体的には，ファイルを開くためにはファイルのパスが必要であるが，そのファイルパスを作成する際の文字列結合などに問題があると発生する．
+  例えば，上位ディレクトリを表すダブルドットや，そこに環境変数を組み合わせたものなどである．
+
+  対策としては，ファイルパスを動的に作成する際に，結合する文字列に対してエスケープ処理を行い，そういった特殊な文字列を無効化することや，
+  通常ではそういった文字列は挿入することがないという前提の元，基底ディレクトリのパス名に，入力値からファイル名を取り出し，そのファイル名のみをファイルパスに結合するなどの対策がある．
+  実際に，PHPではファイルパスの最も深いパスのみを取りだすbasename関数が標準的に用意されている．
+
+
+  \subsection{XSS攻撃[9]}
+  クロスサイトスクリプティング(XSS)は，悪意あるスクリプトを脆弱性があるページを読み込むユーザーのブラウザ等で実行し，クッキーの値などを盗む攻撃である．
+
+  特に，新規アカウント登録やECサイトなどで入力内容を確認のために再び表示するようなプログラムで発生しやすい．
+
+  具体的には，入力内容に不正なscriptタグが含まれることで，それを表示する際に，ブラウザがスクリプトタグを認識しJavaScriptを実行してしまうという攻撃である．
+  また，XSSには主に３種類あり，そもそもの表示ページに不正なスクリプトが埋め込まれているストアドXSSと，先程の入力内容を表示することにより不正なスクリプトを埋め込むリフレクトXSS，クライアントが入力値をバリデーションするために前もって入力値を解釈する場合に発生するDOMベースXSSである．
+
+  対策としては，Content-Security-Policyにdefault-src 'self'を指定して，同一オリジンからしかスクリプトを読み込まないようにする方法や，
+  クッキーにHTTPOnly属性を付与し，同一オリジンにのみ送信するようにする方法，
+  入力内容のバリデーションをバックエンドサービスで実行する方法や，
+  Reactなどを用いたセキュアコーディングなどの方法がある．
+
+  また，ブラウザでの実装に依存するが，X-XSS-Protectionというパラメータも用意されており，
+  このパラメータに1 mode=blockなどの値を指定してHTTPヘッダに含めておけば，
+  ブラウザ側がXSS対策のためのフィルタリングを行ってくれるというものもある．
+  これはあくまでも水際対策であるため，他の対策手段と組み合わせて行うことが重要である．
+
+  \subsection{HTTPレスポンスステータスコード[10]}
+  HTTPのレスポンスステータスコードは特定のHTTPリクエストがどのように完了したか
+  どうかを示す3桁の数値である．以下の表\ref{status_table}に主なHTTPレスポンス
+  ステータスコードを示す．
+
+  \begin{table}[H]
+    \centering
+    \small
+    \caption{HTTPステータスコード表}
+    \label{status_table}
+    \begin{tabular}{|c|c|}
+      \hline
+       ステータスコード & 意味 \\
+      \hline
+      200 & リクエストが成功した(GETの場合，メッセージが転送されたことを示す) \\
+      400 & 構文が無効であるためサーバーがリクエストを理解できなかった \\
+      404 & サーバーがリクエストされたリソースを発見できなかった \\
+      500 & サーバー側で処理方法がわからない事態が発生した \\
+      \hline       
+      \end{tabular}
+  \end{table}
+  
+  \newpage
+  \section{実験環境}
+  本実験環境を図\ref{実験環境}に示す．
+  
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/実験環境5.png}
+    \caption{実験環境}
+    \label{実験環境}
+  \end{figure}
+  
+  図\ref{実験環境}に示した通り本実験環境は仮想マシン群に管理用コンソールから
+  アクセスし仮想マシンを操作する．また，図内のS0413サーバーはIPv4アドレスが
+  10.4.3.0，S0414サーバーが10.4.4.0となっている．個人用マシンは各班員に
+  表\ref{個人用マシン割り当て}に示すように割り当てられ，私は表のとおり
+  C0402を使用する．
+
+  \begin{table}[H]
+    \centering
+    \caption{個人用マシン割り当て}
+    \label{個人用マシン割り当て}
+    \begin{tabular}{|c|c|}
+      \hline
+      \textbf{班員名} & \textbf{マシン番号} \\
+      \hline
+       信宮心尋 & C0401 \\
+      \hline
+       瀧口大地 & C0402 \\
+      \hline
+       津田俊樹 & C0403 \\
+      \hline
+       松澤吏玖 & C0404 \\
+      \hline
+       村田脩真 & C0405 \\
+      \hline
+       矢口凛央子 & C0406 \\
+      \hline
+       米田絆 & C0407 \\
+      \hline
+      \end{tabular}
+  \end{table}
+  
+  \newpage
+  \section{実験方法}
+  \subsection{Webサーバのログ解析}
+  \subsubsection{アクセスログの場所やフォーマット}
+  まず，Apacheのログがどこに格納されているかを調べ，WebサーバーS0414にアクセスし，
+  そのログを見ることでその場所が正しいかの確認をする．
+  次に，アクセスログのフォーマットを調べる．前回の実験同様/etc/apache2にある
+  apache2.confを閲覧し，その中で定義されているであろうログのフォーマットを探す．
+
+  \subsubsection{webサーバにアクセスしたときのアクセスログ}
+  webブラウザでwebサーバ(S0414)にアクセスし，アクセスログにどのように記録されるか
+  を確認する．また，サーバーS0414のIPアドレスは下図\ref{S0414のIPアドレス}に
+  示す通りである．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/鯖IPv4設定.png}
+    \caption{S0414のIPアドレス設定}
+    \label{S0414のIPアドレス}
+  \end{figure}
+
+  \subsubsection{様々なソフトウェアを用いた際のUser-Agent}
+  FireFoxだけでなく，Chromiumでのアクセス，curlコマンドでのS041へのアクセスを行い，
+  それらのアクセスのログを確認しUser-Agentがどのようになっているかを確認する．
+
+  \subsubsection{User-Agentの書き換え}
+  FireFoxはユーザ側の設定でUser-Agentを定められる．設定を変更する方法は以下のとおりである．
+
+  \begin{description}[labelwidth=1.5em,labelsep=0.5em,leftmargin=!,style=nextline]
+    \item[1]FireFoxのアドレスバーに「about:config」を入力する．
+    \item[2]「危険性を承知の上で使用する」をクリックする．
+    \item[3]検索バーで「general.useragent.override」を入力する．
+    \item[4]「文字列」を選択し，新規作成（$+$）で適当な文字列「new\_text」を登録する．
+  \end{description}
+
+  \subsubsection{前回の実験のアクセスログ解析}
+  この実験ではwcコマンドやcatコマンドを用いC0402でS0411やS0412のApacheアクセスログ
+  を閲覧し，アクセス数とアクセス元となったIPアドレスの数を分析する．
+
+  \subsection{SQLコマンドインジェクション実験}
+  S0414にアクセスすると表示される画面にIDとパスワードを入力することでログインの判定を
+  行う簡単なフォーム処理がある．このフォームに表\ref{tab:id-passes-table}に示すパターンのIDとパスワードを
+  入力しどのように動作するか確かめる．またアクセスログも確認する．
+
+  \begin{table}[H]
+  \centering
+  \caption{入力予定のIDとパスワードの組}
+  \label{tab:id-passes-table}
+  \begin{tabular}{c|c|c}
+    \hline
+    % ここにカラムを入力
+    項番 & ID & パスワード \\
+    \hline
+    % ここに各セルのデータを入力
+    (1) & osaka & 1qaz!QAZ \\
+    (2) & osaka & aaaa \\
+    (3) & osaka & ' or '1'='1 \\
+    (4) & ' or 1=1$--$ ' & aaaa \\
+    \hline
+  \end{tabular}
+\end{table}
+  
+  \newpage
+  \section{実験結果}
+  \subsection{Webサーバのログ解析}  
+  \subsubsection{アクセスログの場所やフォーマット[11]}
+  まずApacheのログの出力場所を調べた．参考資料などを用い調べた結果，
+  /var/log/apache2にアクセスログやエラーログがあると知った．
+  これを以下に示すファイル（000-default.conf）によって再度確認する．
+  
+  webサーバS0414の000-default.confファイルを確認した結果を以下に示す．
+
+  \begin{lstlisting}[firstnumber=14, title={000-dedault.conf}]
+  # Available loglevels: trace8, ..., debug, info, notice, warn,
+  # error, crit, alert, emerg.
+  # It is also possible to configure the loglevel for particular
+  # modules, e.g.
+  #LogLevel info ssl:warn
+
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+  CustomLog ${APACHE_LOG_DIR}/access.log combined
+  \end{lstlisting}
+
+  20,21行目より，000-default.conf内ではログの出力先が\${APACHE\_LOG\_DIR}と
+  言う変数で定義されていることがわかった．Ubuntuの本変数は通常/etc/apache2/
+  envvarsというファイルで定義されており，デフォルト値は/var/log/apache2に
+  なっている．以上のことからアクセスログやエラーログは/var/log/apache2の中に
+  あるということが明らかになった．\\
+
+  次に，webサーバS0414のApache2.confファイルを確認した結果を以下に示す．
+
+  \begin{lstlisting}[firstnumber=201, title={Apache2.conf},breaklines=true,breakindent=20pt,basicstyle=\ttfamily,numbers=left]
+  # The following directives define some format nicknames for use with
+  # a CustomLog directive.
+  #
+  # These deviate from the Common Log Format definitions in that they use %O
+  # (the actual bytes sent including headers) instead of %b (the size of the
+  # requested file), because the latter makes it impossible to detect partial
+  # requests.
+  #
+  # Note that the use of %{X-Forwarded-For}i instead of %h is not
+  # recommended.
+  # Use mod_remoteip instead.
+  #
+  LogFormat "%v:%p %h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" vhost_combined
+  LogFormat "%h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" combined
+  LogFormat "%h %l %u %t \"%r\" %>s %O" common
+  LogFormat "%{Referer}i -> %U" referer
+  LogFormat "%{User-agent}i" agent
+  \end{lstlisting}
+
+  000-default.confの21行目より，access.logにはcombinedというフォーマットが
+  適用されているとわかる．よってApache2.confの213行目に示されているフォーマットを
+  用いていることが分かった．よってアクセスログのフォーマットは表\ref{アクセスログフォーマット}
+  の通りになったと言える．
+
+  \begin{table}[H]
+    \centering
+    \caption{ログのフォーマット}
+    \label{アクセスログフォーマット}
+    \begin{tabular}{|l|l|}
+      \hline
+      \%h & アクセス元のホスト名 \\ \hline
+      \%l & クライアントの識別子 \\ \hline
+      \%u & 認証ユーザー名 \\ \hline
+      \%t & リクエストを受け付けた時刻 \\ \hline
+      \textbackslash"\%r\textbackslash" & リクエストの最初の行 \\ \hline
+      \%>s & 最後のレスポンスステータス \\ \hline
+      \%O & 送信したデータのバイト数 \\ \hline
+      \textbackslash"\%\{Referer\}i\textbackslash" & アクセス元 URL \\ \hline
+      \textbackslash"\%\{User-Agent\}i\textbackslash" & User-Agent \\ \hline
+    \end{tabular}
+  \end{table}
+
+  \subsubsection{webサーバにアクセスしたときのアクセスログ}
+  C0402(10.4.0.19)からS0414(10.4.4.0)にアクセスした際のアクセスログを閲覧した．
+  閲覧した後tailコマンドを用いてアクセスログを閲覧した．その結果を以下の
+  図\ref{アクセスログ}に示す．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/課題1check.png}
+    \caption{10.4.4.0にアクセスしたときのログ}
+    \label{アクセスログ}
+  \end{figure}
+
+  図\ref{アクセスログ}の1行目より，10.4.0.19からのアクセス(GET)が成功
+  (ステータスが200)していることがわかった．また，User-Agentから
+  Firefoxブラウザを用いていることもわかった．2行目のログより，favicon.ico
+  （サイトのアイコン画像）を探して検出できなかった(ステータスが404)ことがわかった．
+
+  \subsubsection{様々なソフトウェアを用いた際のUser-Agent}
+  Firefoxを用いた時のUser-Agentは確認できたため，Chromiumやcurlコマンドの
+  User-Agentを確認した．その結果を以下に示す．
+
+  まずChromiumを用いた時のUserAgentを確認する．図\ref{Chromiumでのアクセス(web画面)}
+  にChromiumで10.4.4.0にアクセスしたときの様子を示す．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/課題1_3_chrome_a.png}
+    \caption{Chromiumでのアクセス(web画面)}
+    \label{Chromiumでのアクセス(web画面)}
+  \end{figure}
+
+  図\ref{Chromiumでのアクセス(ログ)}にChromiumのアクセスによるログを示す．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/課題1_3_chrome_r.png}
+    \caption{Chromiumでのアクセス(ログ)}
+    \label{Chromiumでのアクセス(ログ)}
+  \end{figure}
+
+  図\ref{Chromiumでのアクセス(ログ)}より，ChromiumでのアクセスのUser-Agent
+  は「Mozilla/5.0 (X11; Linux x86 64) AppleWebKit/537.36 (KHTML, like Gecko)
+  Chrome/140.0.0.0 Safari/537.36」となることがわかった．\\
+
+  次にcurlコマンドでアクセスしたときのUser-Agent等を確認する．
+  図\ref{curlコマンドでのアクセス(コマンド実行)}にcurlコマンドを
+  実行したときの様子を示す．ただ，あまりに実行結果が長すぎるため切り取っている．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/課題1_3_curl_a.png}
+    \caption{curlコマンドでのアクセス(コマンド実行)}
+    \label{curlコマンドでのアクセス(コマンド実行)}
+  \end{figure}
+
+  図\ref{curlコマンドでのアクセス(ログ)}にcurlコマンドによるアクセスログを示す．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/課題1_3_curl_s.png}
+    \caption{curlコマンドでのアクセス(ログ)}
+    \label{curlコマンドでのアクセス(ログ)}
+  \end{figure}
+
+  図\ref{curlコマンドでのアクセス(ログ)}より，curlコマンドによるアクセスのUser-Agent
+  は「curl/8.15.1」となることがわかった．
+
+  また，省略していたがFireFoxのUser-Agentは「Mozilla/5.0 (X11; Linux x86 64; 
+  rv:128.0) Gecko/20100101Firefox/128.0」となることがわかった．
+
+  以上の結果から表\ref{table_user-Agent}に各手段で記録されるUser-Agentをまとめる．
+  実験結果より，プラットフォーム，プラットフォームの詳細，ブラウザ名/バージョンの順に
+  記載されていることが分かった．curlコマンドでアクセスした場合はcurlのバージョンのみが
+  記載されていた．
+
+  \begin{table}[H]
+    \centering
+    \caption{記録されたUser-Agent}
+    \label{table_user-Agent}
+    \begin{tabular}{|l|l|}
+      \hline
+      アクセス手法 & \multicolumn{1}{c|}{記録された User-Agent} \\ \hline
+      Chromium & \begin{tabular}[c]{@{}l@{}} 
+        Mozilla/5.0 (X11; Linux x86\_64) \\ 
+        AppleWebKit/537.36 (KHTML, like Gecko) \\ 
+        Chrome/140.0.0.0 Safari/537.36 
+      \end{tabular} \\ \hline
+      Firefox & \begin{tabular}[c]{@{}l@{}} 
+        Mozilla/5.0 (X11; Linux x86\_64; rv:128.0) \\ 
+        Gecko/20100101 \\ 
+        Firefox/128.0 
+      \end{tabular} \\ \hline
+      curl コマンド & curl/8.15.1 \\ \hline
+    \end{tabular}
+  \end{table}
+
+  \subsubsection{User-Agentの書き換え}
+  FirefoxでUser-Agentを「new\_text」と変更したときの様子を図\ref{new_text}に示す．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/課題1_4_e.png}
+    \caption{変更部分}
+    \label{new_text}
+  \end{figure}
+
+  また，その状態でS0414(10.4.4.0)にアクセスしたときのログを図\ref{new_textログ}
+  に示す．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/課題1_4_r.png}
+    \caption{User-Agent変更後ログ}
+    \label{new_textログ}
+  \end{figure}
+
+  図\ref{new_textログ}より，User-Agent部分には「new\_text」とありUser-Agentの
+  変更が反映されていることが明らかになった．
+
+  \subsubsection{前回の実験のアクセスログ解析}
+  図\ref{wcコマンド結果}に前回の実験で使用したwebサーバS0411,S0412の
+  アクセス回数をsftpコマンドとwcコマンドを用いて個人用マシンで閲覧したときの様子を
+  示す．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/課題1_5_1.png}
+    \caption{wcコマンド結果}
+    \label{wcコマンド結果}
+  \end{figure}
+
+  また，図\ref{catコマンド結果}に前回の実験で使用したwebサーバS0411,S0412に
+  アクセスしたIPアドレスとその回数をcatコマンドを用いて閲覧したときの様子を示す．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/課題1_5_2.png}
+    \caption{catコマンド結果}
+    \label{catコマンド結果}
+  \end{figure}
+
+  以上の結果を表\ref{wc_table}，表\ref{cat_table}にまとめる．
+
+  \begin{table}[H]
+    \centering
+    \caption{0411, 0412 アクセスログ解析結果}
+    \label{wc_table}
+    \begin{tabular}{|l|r|r|}
+      \hline
+      & \multicolumn{1}{c|}{0411} & \multicolumn{1}{c|}{0412} \\ \hline
+      総アクセス数 (回) & 601 & 53 \\ \hline
+      アクセス元の IP アドレス数 (個) & 9 & 3 \\ \hline
+    \end{tabular}
+  \end{table}
+
+  \begin{table}[H]
+    \centering
+    \caption{各マシンに対するアクセス数 (回)}
+    \label{cat_table}
+    \begin{tabular}{|l|r|r|}
+      \hline
+      IP アドレス & \multicolumn{1}{c|}{0411} & \multicolumn{1}{c|}{0412} \\ \hline
+      10.4.0.15 & 58 & 0 \\ \hline
+      10.4.0.19 & 111 & 30 \\ \hline
+      10.4.0.22 & 98 & 0 \\ \hline
+      10.4.0.27 & 42 & 0 \\ \hline
+      10.4.0.31 & 38 & 0 \\ \hline
+      10.4.0.32 & 127 & 0 \\ \hline
+      10.4.0.38 & 107 & 2 \\ \hline
+      10.4.1.99 & 11 & 0 \\ \hline
+      127.0.0.1 & 9 & 21 \\ \hline
+    \end{tabular}
+  \end{table}
+
+  \subsection{SQLコマンドインジェクション実験}
+  最初に本実験で用いるフォームシステムで登録されているIDとパスワードの
+  組み合わせの図を図\ref{DB}に示す．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/DB.png}
+    \caption{IDとパスワード}
+    \label{DB}
+  \end{figure}
+
+  図\ref{SQL_TT_入力}にID:osaka,パスワード:1qaz!QAZとした時の入力画面を示す．
+  また，その時のwebページ上での出力を図\ref{SQL_TT_出力}に，アクセスログを
+  図\ref{SQL_TT_ログ}に示す．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/課題2check1_web_e.png}
+    \caption{ID:osaka,パスワード:1qaz!QAZ（入力）}
+    \label{SQL_TT_入力}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/課題2check1_web_r.png}
+    \caption{ID:osaka,パスワード:1qaz!QAZ（出力）}
+    \label{SQL_TT_出力}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/課題2check1_server.png}
+    \caption{ID:osaka,パスワード:1qaz!QAZ（ログ）}
+    \label{SQL_TT_ログ}
+  \end{figure}
+
+  図\ref{SQL_TT_出力}より，図\ref{DB}の通りの入力をしたためログインは当然成功した．
+  また，図\ref{SQL_TT_ログ}を見ると，フォームに入力したデータがGETメソッドで送信
+  されていることや，通常URLとして使われないこと，「!」「’」等が原理で示したように
+  変換されていることなどが分かった．
+
+  図\ref{SQL_FF_入力}にID:osaka,パスワード:aaaaとした時の入力画面を示す．
+  また，その時のwebページ上での出力を図\ref{SQL_FF_出力}に，アクセスログを
+  図\ref{SQL_FF_ログ}に示す．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/課題2check2_web_e.png}
+    \caption{ID:osaka,パスワード:aaaa（入力）}
+    \label{SQL_FF_入力}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/課題2check2_web_r.png}
+    \caption{ID:osaka,パスワード:aaaa（出力）}
+    \label{SQL_FF_出力}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/課題2check2_server.png}
+    \caption{ID:osaka,パスワード:aaaa（ログ）}
+    \label{SQL_FF_ログ}
+  \end{figure}
+
+  図\ref{SQL_FF_出力}，図\ref{DB}より，IDは在るがパスワードが違うためログイン
+  に失敗している．これも当然の処理である．ログについては先ほど述べた内容と重なるため
+  割愛する．
+
+  図\ref{SQL_TF_入力}にID:osaka,パスワード:'or'1'='1とした時の入力画面を示す．
+  また，その時のwebページ上での出力を図\ref{SQL_TF_出力}に，アクセスログを
+  図\ref{SQL_TF_ログ}に示す．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/課題2check3_web_e.png}
+    \caption{ID:osaka,パスワード:'or'1'='1（入力）}
+    \label{SQL_TF_入力}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/課題2check3_web_r.png}
+    \caption{ID:osaka,パスワード:'or'1'='1（出力）}
+    \label{SQL_TF_出力}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/課題2check3_server.png}
+    \caption{ID:osaka,パスワード:'or'1'='1（ログ）}
+    \label{SQL_TF_ログ}
+  \end{figure}
+
+  図\ref{SQL_TF_出力}，図\ref{DB}より，IDは在るがパスワードが違うためログイン
+  に失敗となるはずが，成功してしまった．これは「' OR '1'='1」と入力することで
+  SQLのSELECT文の条件文に接触し，表のデータを全て呼ぶようにしてしまうからである．
+  そのためログインは成功してしまい，結果の一致した数も5という表の総量を表す数
+  になっている．ログに異変はない．
+
+  図\ref{SQL_FT_入力}にID:'or1=1--',パスワード:aaaaとした時の入力画面を示す．
+  また，その時のwebページ上での出力を図\ref{SQL_FT_出力}に，アクセスログを
+  図\ref{SQL_FT_ログ}に示す．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/課題2check4_web_e.png}
+    \caption{ID:'or1=1--',パスワード:aaaa（入力）}
+    \label{SQL_FT_入力}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/課題2check4_web_r.png}
+    \caption{ID:'or1=1--',パスワード:aaaa（出力）}
+    \label{SQL_FT_出力}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/課題2check4_server.png}
+    \caption{ID:'or1=1--',パスワード:aaaa（ログ）}
+    \label{SQL_FT_ログ}
+  \end{figure}
+
+  図\ref{SQL_FT_出力}，図\ref{DB}より先ほどと同様にSQLコマンドインジェクションが成功
+  したと言える．ログに異変はない．
+  
+  \newpage
+  \section{検討課題}
+  \subsection{webサーバのプログラムの動作}
+  ここでは，サーバ側のプログラムであるlogin.phpで行っている処理をソースコードから
+  調べ，図\ref{DB}と比較し考える．図\ref{DB}を図\ref{DB_re}に再掲し，login.php
+  の中身のスクリーンショットを図\ref{login.php}に示す．
+  また，表\ref{login_result}にログインフォームを用いた実験結果を簡潔にまとめる．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/DB.png}
+    \caption{IDとパスワード(再掲)}
+    \label{DB_re}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/login.php.png}
+    \caption{login.php}
+    \label{login.php}
+  \end{figure}
+
+  また，図\ref{login.php}を文書として以下に示す．
+
+  \begin{center}
+      \textbf{login.php}
+  \end{center}
+
+  \begin{lstlisting}[title={login.php} , language=PHP]
+  <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>ログイン</title>
+      <?php
+        if(isset($_GET['id'])){
+          $id = $_GET['id'];
+        }
+
+        if(isset($_GET['pass'])){
+          $pass = $_GET['pass'];
+        }
+
+        $query = "SELECT * FROM users WHERE id='$id' AND pass='$pass'";
+        $mysqli = new mysqli('localhost', 'userx', 'toor', 'db');
+        $result = $mysqli->query($query);
+
+      ?>
+    </head>
+    <body>
+      <?php
+        if($result->num_rows){
+          $row = $result->fetch_row();
+          echo "こんにちは，".$row[2]."さん。<br>";
+        }else{
+          echo "ログインに失敗しました。<br>";
+        }
+        echo "<br>".$result->num_rows."<br>";
+        $mysqli->close();
+      ?>
+    </body>
+  </html>
+  \end{lstlisting}
+
+  \begin{table}[H]
+    \centering
+    \caption{ログイン実験の結果一覧}
+    \label{login_result}
+    \begin{tabular}{cllcc}
+      \hline
+      No. & 入力ID & 入力パスワード & ログイン結果 & 検索結果（行数） \\
+      \hline
+      1 & osaka & 1qaz!QAZ & 成功 & 1 \\
+      2 & osaka & aaaa & 失敗 & 0 \\
+      3 & osaka & \texttt{' or '1' = '1} & 成功 & 5 \\
+      4 & \texttt{' or 1=1-- } & aaaa & 成功 & 5 \\
+      \hline
+    \end{tabular}
+  \end{table}
+
+  login.phpの5行目から17行目ではデータベースから入力されたIDとパスワードを検
+  索し，20行目から29行目でその結果を表示している．具体的な処理の流れとして，
+  まず5行目から12行目でGETメソッドにより送信されたIDとパスワードを順次取得し
+  ，13行目でのクエリ発行と14行目でのデータベース接続を経て，15行目でクエリを
+  実行しその結果を変数resultに代入している．表示を担う20行目から29行目では，
+  まず21行目で検索結果の行数を取得し，一致するデータの有無によって処理を分岐
+  させている．検索にヒットした場合は，22行目で結果を数値添字の配列に変換して
+  ユーザー名を表示する一方，ヒットしなかった場合は24行目で「ログインに失敗し
+  ました．」と表示する．最後に，27行目でヒット件数を出力し，28行目でデータベ
+  ースとの接続を切断する仕組みとなっている．
+
+  また，図\ref{DB_re}と表\ref{login_result}から以下のことがわかる．結果でも
+  多少触れたが再度記述する．
+  まず，表\ref{login_result}の1つ目の結果は，図\ref{DB_re}に示される通り，
+  この組み合わせはデータベース内に存在するためログインは成功する．またこれも
+  当然であるが1行の検索結果が得られた．
+  次に，表\ref{login_result}の2つ目の結果は1つ目とは違い図\ref{DB_re}を
+  見ればわかるようにデータベース内に組み合わせが存在しない．そのためログインは
+  失敗となり検索結果は0行となった．これらはシステムの想定通りの挙動であると言える．
+
+  続いて，表\ref{login_result}の3つ目の結果は，パスワード欄に
+  「\texttt{' or '1' = '1}」を入力したものである．図\ref{DB_re}にはこの
+  組み合わせは存在しないため，本来であればログインは失敗し検索結果は0行とな
+  るはずである．しかし，実験結果ではログイン成功となり，検索結果は5行となった．
+  抽出条件であるWHERE句が
+  「\texttt{pass = '' OR '1' = '1'}」という構造になっており，この
+  「\texttt{'1' = '1'}」が常に真となるため，テーブル内の全データが検索されたと
+  考えられる．また，画面に「NARA Taro」というユーザー名が表示されたのは，全5行
+  の検索結果のうち，テーブルの先頭行がプログラムによって取得されたためと推察され
+  る．
+
+  さらに，表\ref{login_result}の4つ目の結果は，ID欄に「\texttt{' or 1=1-- }」
+  を入力したものである．これも同様に図\ref{DB_re}には存在しないデータであるが，
+  検索結果は5行となりログインに成功した．ハイフン（\texttt{--}）以降がSQLのコメントとして扱われたためで
+  ある．これにより，パスワードによる認証処理そのものが無効化され，ID欄に注入された
+  「\texttt{1=1}」という条件のみが実行された結果，全レコードが抽出されたと考えられる．
+
+  以上の実験結果から，本システムにおけるSQLコマンドインジェクションの脆弱性の原因
+  は，外部から受信したデータを適切に処理せず，そのままSQL文の構築に利用している点
+  にあると言える．ユーザーの入力値によってSQL文の論理構造を意図せず改変できてしま
+  うことが，不正なログインを許す直接的な要因となっている．
+
+  \subsection{SQLコマンドインジェクションの問題点}
+  前検討項目で発覚した脆弱性がもたらす問題は，単なるログインの回避だけに留まらず，システム全体に
+  対して極めて深刻な影響を及ぼす．その主な危険性は以下の通りである．
+
+  第一に，情報漏洩（機密性の侵害）が挙げられる．本実験では全5名分のデータが抽出さ
+  れたが，これが実際のシステムであれば，数万件以上の個人情報やクレジットカード番
+  号などが一度に流出する可能性がある．これは企業の社会的信用の失墜や，巨額の損害
+  に直結する．
+
+  第二に，認証回避による不正操作（権限の悪用）である．攻撃者が管理者アカウントの
+  IDを特定し，本手法を用いてログインした場合，管理者権限を完全に奪取される恐れが
+  ある．これにより，他ユーザーのデータの削除や改ざん，あるいはWebサイトの乗っ取り
+  といった被害が発生する．
+
+  第三に，データの改ざんおよび破壊（完全性と可用性の侵害）の危険性である．今回は
+  参照（SELECT）のみを確認したが，クエリを途中で区切るなどで，新たに削除（DELETE）や
+  更新（UPDATE）の命令を注入することで，データベースの内容を直接書き換えたり，
+  消去したりすることが可能である．
+
+  以上より，SQLコマンドインジェクションは情報セキュリティの3要素（機密性・完全性・
+  可用性）すべてを崩壊させうるということが分かった．
+
+  \subsection{SQLコマンドインジェクションの対策}
+  本実験で明らかになった危険性を排除するための根本的な対策として「プリペアド
+  ステートメント（静的プレースホルダ）」である．この手法は，SQL文の構造を
+  あらかじめデータベース側に解析させておき，ユーザー入力は「?」というプレー
+  スホルダへ後から流し込む仕組みである．このプロセスを介
+  することで，データベースは入力値を純粋な「データ」としてのみ処理し，たとえ攻撃コ
+  ードが含まれていても「命令」として解釈することはないはずである．
+
+  また，そもそも攻撃されないようにする対策や，攻撃の被害を最小限にする対策もある．
+  具体的にはデータベースの方で権限の付与を正しく行うことでデータベースの改ざんなどを
+  防ぐことができたり，エラーメッセージなどをブラウザに表示しないことで攻撃者の
+  攻撃難易度を上げたりできる．
+
+  \subsection{SQLコマンドインジェクションの検知}
+  ここでは，SQLコマンドインジェクションをログファイルから検知できるかについて考察
+  する．SQLコマンドインジェクションは，Webアプリケーションのフォームに，特殊文字列
+  を挿入することで，任意のSQL文を実行させる攻撃である．その際，攻撃者は既存のSQL
+  文を無効化する処理を行う．その無効化の処理は，パターンが存在すると考えられる．その
+  ため，これまでの攻撃などで用いられたパターンを蓄積し，アクセスログから蓄積したパター
+  ンと一致するものがあるかを検知することで，SQLコマンドインジェクションを検知するこ
+  とができると考えられる．しかし，これは既知の攻撃に対してのみ有効であり，未知の攻撃
+  に対しては，検知することができないと考えられる．実際図\ref{SQL_checkmiss}に示す
+  通り，SQLコマンドインジェクションをアクセスログからは検知できなかった．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/検討4.png}
+    \caption{SQLコマンドインジェクション検知の失敗}
+    \label{SQL_checkmiss}
+  \end{figure}
+
+  \subsection{SQLコマンドインジェクション対策の実装}
+  前々検討項目(6.3)で主なSQLコマンドインジェクション対策としてプリペアドステートメント
+  を挙げた．これをlogin.phpに反映させることによって本検討項目で対策を実践する．
+  まず検討課題の指定としてLinux(クライアント側:C0402)での作業がある．これを
+  実行していることを図\ref{login.php_move}によって証明する．
+  図\ref{login.php_move}のコマンドで，C0402で作成したlogin.php（改善済み）を
+  webブラウザ側（S0414）からアクセスできるように公開用フォルダへ移動させている．
+  対策後のlogin.phpのスクリーンショットを図\ref{login.php_re}に示す．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/検討5_2_1.png}
+    \caption{login.phpを閲覧するためにC0402に移す作業}
+    \label{login.php_move}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/検討5_2_2.png}
+    \caption{login.php（対策済み）}
+    \label{login.php_re}
+  \end{figure}
+
+  また，図\ref{login.php_re}を文書としたものを以下に示す．
+
+  \begin{lstlisting}[title={login.php（改善済み）},language=PHP]
+  <html>
+  <head>
+    <meta charset="UTF-8">
+    <title>ログイン(対策済み)</title>
+    <?php
+      $result = null;
+      $id = '';
+      $pass = '';
+
+      if(isset($_GET['id'])){
+        $id = $_GET['id'];
+      }
+      if(isset($_GET['pass'])){
+        $pass = $_GET['pass'];
+      }
+
+      $mysqli = new mysqli('localhost', 'userx', 'toor', 'db');
+      $sql = "SELECT * FROM users WHERE id = ? AND pass = ?;";
+      $stmt = $mysqli->prepare($sql);
+      $stmt->bind_param("ss", $id, $pass);
+      $stmt->execute();
+      $result = $stmt->get_result();
+      $stmt->close();
+    ?>
+  </head>
+  <body>
+    <?php
+      if($result->num_rows){
+        $row = $result->fetch_row();
+        echo "こんにちは、".$row[2]."さん。<br>";
+      }else{
+        echo "ログインに失敗しました。<br>";
+      }
+      echo "<br>".$result->num_rows."<br>";
+      $mysqli->close();
+    ?>
+  </body>
+  </html>
+  \end{lstlisting}
+
+  上記のlogin.phpの処理について説明を行う．まず19行目で変数を直接入れずに
+  ?（プレースホルダ）に置き換えSQLの型だけを定義している．
+  20行目でprepare()メソッドを用いてSQL文を先にデータベース側に送り解析させ
+  ている．21行目でbind\_param()によって後から変数値（id,pass）を割り当てている．
+  
+  以上のようにしてlogin.phpを強固にし，プリペアドステートメントによりSQL
+  コマンドインジェクションの対策を行った．
+
+  図\ref{login.php_re_1}から図\ref{login.php_re_4}に実験で用いたそれぞれの
+  入力を入れた時のwebページでの結果を示す．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/検討5_2_3_1.png}
+    \caption{ID:osaka, パスワード:1qaz!QAZの組み合わせを送信したときの動作}
+    \label{login.php_re_1}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/検討5_2_3_2.png}
+    \caption{ID:osaka, パスワード:aaaaの組み合わせを送信したときの動作}
+    \label{login.php_re_2}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/検討5_2_3_3.png}
+    \caption{ID:osaka, パスワード:’ or ’1’ = ’1の組み合わせを送信したときの動作}
+    \label{login.php_re_3}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/検討5_2_3_4.png}
+    \caption{ID:’ or 1==1– ’,パスワード:aaaaの組み合わせを送信したときの動作}
+    \label{login.php_re_4}
+  \end{figure}
+
+  また，これらをまとめた表を表\ref{login.php_re_table}に示す．
+
+  \begin{table}[h]
+      \centering
+      \caption{対策後の結果}
+      \label{login.php_re_table}
+      \begin{tabular}{|c|c|c|c|}
+          \hline
+          ID & パスワード & ログインの可否 & 数字 \\ \hline
+          osaka & 1qaz!QAZ & 成功 & 1 \\ \hline
+          osaka & aaaa & 失敗 & 0 \\ \hline
+          osaka & ' or '1' = '1 & 失敗 & 0 \\ \hline
+          ' or 1==1-- ' & aaaa & 失敗 & 0 \\ \hline
+      \end{tabular}
+  \end{table}
+
+  表\ref{login.php_re_table}より，正規のIDとパスワードを用いた時のみ
+  ログインが成功し，それ以外の組み合わせのログインが失敗していることから，
+  本検討項目で行ったSQLコマンドインジェクションの対策は成功したと言える．
+
+  \subsection{2つのフォームが持つ問題の解決}
+  webサーバにはフォームが合計3つ用意されており，残りのファイルの内容を表示する
+  フォームと，メールアドレスを登録するフォームの問題点について検討していく．
+
+  \subsubsection{1つ目のフォーム : ファイルの内容を表示するフォーム}
+  まずファイルの内容を表示するフォームについて考える．このフォームはファイル名を入力
+  するとそのファイルの内容を表示するものである．ここで，サーバ側のプログラムである
+  file.phpのコードのスクリーンショットを図\ref{file.php}に示す．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/検討6_1_1.png}
+    \caption{file.php}
+    \label{file.php}
+  \end{figure}
+
+  また，以下にfile.phpを文書化したものを示す．
+
+  \begin{lstlisting}[title={file.php},language=PHP]
+  <html>
+  <head>
+    <meta charset="UTF-8">
+    <title>ファイルの内容</title>
+    <?php
+      if(isset($_GET['filename'])){
+        $filename = $_GET['filename'];
+        $fullpass = '/var/www/html/'.$filename;
+      }
+    ?>
+  </head>
+  <body>
+    <?php
+      if(file_exists($fullpass)){
+        echo "<font color=\"red\">".$fullpass.
+            "</font> の内容は次のとおりです。<br><hr>";
+        readfile($fullpass);
+      }else{
+        echo "<font color=\"red\">".$fullpass.
+            "</font> は存在しません。";
+      }
+    ?>
+  </body>
+  </html>
+  \end{lstlisting}
+
+  上記のソースコードより，このプログラムはhtmlディレクトリ内のファイルを表示させ
+  るものであることが分かる．しかし，このプログラムでは，ディレクトリトラバーサル攻撃
+  が可能である．
+  盗み出されるファイルを図\ref{d}に示す．password.txtの中にpassword\:pass123と書き込んでいる．
+  図\ref{attack_d}にディレクトリトラバーサル攻撃を行った結果を示す．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/検討6_1_2.png}
+    \caption{password.txt作成}
+    \label{d}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/検討6_1_3.png}
+    \caption{ディレクトリトラバーサル攻撃結果}
+    \label{attack_d}
+  \end{figure}
+
+  図\ref{attack_d}より，フォームに不正な入力を行うことでetcフォルダに置いた
+  password.txtの中身が抜き出されていることがわかる．よって，このフォームは
+  ディレクトリトラバーサル攻撃の危険性があると示された．
+
+  \subsubsection{2つ目のフォーム : メールアドレスの登録を行うフォーム}
+  次にメールアドレスの登録を行うフォームの問題点を考える．本フォームはメールアドレス
+  を入力するとそのメールアドレスにメールを送信するものである．ここで，サーバ側の
+  プログラムであるmail.phpのソースコードのスクリーンショットを図\ref{mail.php}に示す．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/検討6_2_1.png}
+    \caption{mail.php}
+    \label{mail.php}
+  \end{figure}
+
+  また，以下にmail.phpを文書化したものを示す．
+
+  \begin{lstlisting}[title={mail.php},language=PHP]
+  <html>
+  <head>
+    <meta charset="UTF-8">
+    <title>メールアドレスの登録</title>
+    <?php
+      if(isset($_GET['mailaddress'])){
+        $mailaddress = $_GET['mailaddress'];
+      }
+    ?>
+  </head>
+  <body>
+    <?php
+      echo "<font color=\"red\">".$mailaddress.
+          "</font> へメールを送信しましたので、ご確認ください。<br>";
+      system("/usr/sbin/sendmail $mailaddress");
+    ?>
+  </body>
+  </html>
+  \end{lstlisting}
+
+  mail.phpでは，/usr/sbin/sendmail の実行ファイルを呼び出し，引数にメール
+  アドレスを渡している．「;」でコマンドが区切られるため，図\ref{attack_o}に
+  示すように「;」の後にファイルの一覧を表示するコマンド（ls -al）を入れると，
+  OSコマンドインジェクションが起きファイルの一覧が出力されると考えられる．
+  これを実行した結果を図\ref{attack_o_re}に示す．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/検討6_2_2.png}
+    \caption{OSコマンドインジェクション入力}
+    \label{attack_o}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/検討6_2_3.png}
+    \caption{OSコマンドインジェクション出力}
+    \label{attack_o_re}
+  \end{figure}
+
+  図\ref{attack_o_re}より，予想の通りにファイルの一覧が流出することが確認できた．
+  このことからこのフォームはOSコマンドインジェクションの危険性があると示された．
+
+  \newpage
+  \noindent
+  \begin{huge}
+    まとめ・感想\\\\
+  \end{huge}
+  本実験を通して，Webサーバのログのフォーマット等を理解することで，どの様な情報が
+  記録されるかを理解した．また，それらの情報をCSVファイルなどに出力せずとも，CLIで
+  有意な分析を行うことができるようになった．
+  次に，SQLコマンドの実行過程を理解することで，SQLコマンドインジェクションがどの
+  様な原理のもとに成立する攻撃であるかを理解した．また，その他の脆弱性に対しても実行
+  可能な攻撃を想定し，それらに対しての対策を検討し，実装することができた．
+  \newpage
+  \begin{huge}
+    参考文献\\\\
+  \end{huge}
+  % \noindent[]ページ名，\url{}，2025年12/25参照．\\
+  \noindent[1]ログファイルのフォーマットを定義する，\url{https://www.javadrive.jp/apache/log/index2.html}，2025年12/21参照．\\
+  \noindent[2]ユーザーエージェントとは，\url{https://wa3.i-3-i.info/word1452.html}，2025年12/21参照．\\
+  \noindent[3]UserAgentからOS/ブラウザなどの調べかたのまとめ，\url{https://qiita.com/nightyknite/items/b2590a69f2e0135756dc}，2025年12/25参照．\\
+  \noindent[4]【超初心者向け】MySQLとは？どこよりもわかりやすく解説，\url{https://www.sejuku.net/blog/9021}，2025年12/25参照．\\
+  \noindent[5][MySQL]テーブル作成まとめ，\url{https://qiita.com/wakinoza/items/d813e436ec3e5a4cab66}，2025年12/25参照．\\
+  \noindent[6]SQLインジェクションとは？その脅威と防止策の例を解説 ，\url{https://qiita.com/e-tak/items/702166f57e96591da5eb}，2025年12/25参照．\\
+  \noindent[7]\#0215（2025/08/17）OSコマンドインジェクション \#Web，\url{https://qiita.com/kodack/items/a6c3723982d293b23e94}，2025年12/25参照．\\
+  \noindent[8]\#0214（2025/08/14）ディレクトリトラバーサルの概要，\url{https://qiita.com/kodack/items/652a3339f9e5681d2bcc}，2025年12/25参照．\\
+  \noindent[9]【セキュリティ】XSS超入門 ─ 仕組み・検出・攻撃シナリオ・回避と防御まで一気通貫，\url{https://qiita.com/nozomi2025/items/0c4b7503bb2da4560b75}，2025年12/25参照．\\
+  \noindent[10]HTTPステータスコード一覧，\url{https://qiita.com/takuo_maeda/items/9cff0b03e74f8f600eee}，2025年12/25参照．\\
+  \noindent[11]Apacheのログの場所は？ログの場所を設定する方法について詳しく解説，\url{https://engineer-ninaritai.com/apache-log-directory/}，2025年12/25参照．\\
+\end{document}
