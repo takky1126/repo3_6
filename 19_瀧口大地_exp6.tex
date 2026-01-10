@@ -1,0 +1,189 @@
+\documentclass[12pt]{ltjarticle}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage{graphicx}
+\usepackage[hyphens]{url}
+\usepackage{multirow}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{here}
+\usepackage{array}
+\usepackage{geometry}
+\usepackage{microtype}
+\usepackage{fontspec}
+\usepackage{luatexja-fontspec} % 明示的に読み込む
+\usepackage{luatexja}
+\usepackage{titlesec}
+\usepackage{subcaption}
+\usepackage{listings}
+
+% ========== listings の設定 ==========
+\lstset{
+  % フレーム (枠線) の指定：上 (t) と 下 (b) の線だけ
+  frame=tb, 
+  % 枠線とコードの間の余白
+  framesep=5pt, 
+  % 等幅フォントで表示
+  basicstyle=\ttfamily\small, 
+  % 行番号を左側に表示
+  numbers=left,
+  % 行番号の書式を小さく（tiny）する
+  numberstyle=\tiny, 
+  % 行番号とコードの間のスペース
+  numbersep=5pt, 
+  % 行番号の増分 (1行ごと)
+  stepnumber=1, 
+}
+
+% \usepackage{array}
+% \usepackage{booktabs}
+% \geometry{margin=20mm}
+\titleformat{\section}[block]
+  {\normalfont\LARGE\bfseries}
+  {第\thesection 章}{1em}{}
+
+\setmainfont{ipaexm.ttf} % 日本語フォント（IPAex明朝）を指定 ※ XeLaTeX or LuaLaTeXが必要
+\geometry{left=25mm, right=25mm, top=30mm, bottom=30mm} % 余白設定
+\renewcommand{\baselinestretch}{1.2} % 行間を1.2倍に設定
+
+\counterwithin{figure}{section} % 図番号を「1.1」のようにセクションと連動
+\counterwithin{table}{section}  % 表番号も同様にセクションと連動
+
+\makeatletter
+% section 再定義（改ページなし・見た目調整）
+\renewcommand{\section}{%
+  \@startsection{section}{1}{\z@}%
+  {-2.5ex \@plus -1ex \@minus -.2ex}%
+  {1.5ex \@plus.2ex}%
+  {\normalfont\LARGE\bfseries\raggedright}%
+}
+
+% subsection 再定義（見た目だけ調整，番号はそのまま）
+\renewcommand{\subsection}{%
+  \@startsection{subsection}{2}{\z@}%
+  {-1.5ex \@plus -0.5ex \@minus -.2ex}%
+  {1ex \@plus .2ex}%
+  {\normalfont\large\bfseries\raggedright}%
+}
+
+% section 番号だけ「第n章」に変更
+\renewcommand{\thesection}{第\arabic{section}章}
+
+% subsection 番号は従来の n.m 形式を保つ（これが重要）
+\renewcommand{\thesubsection}{\arabic{section}.\arabic{subsection}}
+\makeatother
+
+\makeatletter
+% 表番号を「2.1」「2.2」のようにセクション番号と連動
+\renewcommand{\thetable}{\arabic{section}.\arabic{table}}
+% キャプションの前に「表」を表示
+\renewcommand{\tablename}{表}
+% 参照の際にも「表」と表示
+\renewcommand{\refname}{\tablename}
+\renewcommand{\thefigure}{\arabic{section}.\arabic{figure}}
+\renewcommand{\figurename}{図}
+\makeatother
+
+% キャプションの書式設定
+\captionsetup[figure]{labelfont={bf}, labelsep=space, font=small}  % キャプションを小さくし，「図」を太字に設定
+
+% タイトルと著者の設定
+\title{\huge 第5章　サイバーセキュリティ基礎実験2}
+\author{\large 3年情報工学科 19番 瀧口大地}
+  
+\date{} % 日付を空にする
+
+\begin{document}
+
+  \begin{titlepage}
+    \vspace*{\fill}
+    \begin{center}
+      {\Large 情報工学実験 II 第5回レポート}\\
+      \vspace{0.5\baselineskip}
+      {\Huge サイバーセキュリティ基礎実験2}
+    \end{center}
+
+    \vspace{2cm}
+    \begin{LARGE}
+      \begin{center}
+        3年 情報工学科 19番 瀧口大地
+      \end{center}
+    \end{LARGE}
+
+    \begin{large}
+    \vspace{1.5cm}
+    \begin{flushleft}
+      \normalsize
+      提出期限: 2025年12月26日09:00\\
+      提出日: 2025年12月22日23:00
+    \end{flushleft}
+
+    \vspace{1cm}
+    \begin{flushleft}
+      共同実験者:3班\\
+       4番 井村周慈\\
+       9番 カリラ\\
+      14番 後藤輝一\\
+      30番 三原瑚桜\\
+      34番 山口紗音
+    \end{flushleft}
+    \end{large}
+
+    \vspace*{\fill}
+  \end{titlepage}
+
+  \clearpage
+  \setcounter{page}{1}
+  \pagestyle{plain}
+
+  \newpage
+  \noindent
+  \begin{huge}
+    アブストラクト\\\\
+  \end{huge}
+  本実験では，Python(パイソン)と呼ばれるスクリプト言語の文法や基本的な構造について
+  学習し，Pythonを用いて様々なデータ整理や加工，テキストファイル処理及びツールの基本
+  的な作成方法について習得すること，他のプログラミング言語と比較してPythonの特徴や
+  利点についても学ぶことを目的とする．具体的にはPythonの基本文法を学ぶため，演算プ
+  ログラム，九九表の出力プログラムを作成する．また，Pythonで用いられるモジュールを用
+  いて日数計算プログラムを作成する．さらに，テキストファイルを読み込み，ソートするプ
+  ログラム，重複データを削除するプログラムを作成する．それらの総括として，アクセスロ
+  グから正規表現を用いてSQLコマンドインジェクションを検出するプログラム，各IPアド
+  レスのアクセス回数を棒グラフとして出力するプログラムを作成する．また，発展的な課題
+  としてmatplotlib を用いて，各IPアドレスのアクセス数を棒グラフとして出力するプログ
+  ラムを作成する．具体的な方法として，重複データを削除するプログラムでは重複している
+  かどうかの判定をsetを用いて行った．また，アクセスログから正規表現を用いてSQLコマ
+  ンドインジェクションを検出するプログラムでは，SQLコマンドインジェクションで見られ
+  る特徴的な文字列を正規表現で検出することで，検出を行った．また，各IPアドレスのア
+  クセス回数を棒グラフとして出力するプログラムでは，辞書を用いて各IPアドレスのアク
+  セス回数をカウントしopenpyxlを用いてエクセルファイルに棒グラフを出力した．同様に
+  matplotlib を用いて各 IP アドレスごとのアクセス数を棒グラフとして出力した．作成した
+  これらのプログラムは実験時間内に作成し，正常に動作することが確認できた．
+
+  \newpage
+  \noindent
+  % \setcounter{page}{1}
+  \section{実験目的}
+  本実験では，Python(パイソン)と呼ばれるスクリプト言語の文法や基本的な構造について
+  学習し，Pythonを用いて様々なデータ整理や加工，テキストファイル処理及びツールの基本
+  的な作成方法について習得することを目的とする．また，他のプログラミング言語と比較し
+  てPython の特徴や利点についても学ぶ．
+  
+  \newpage
+  \section{実験結果}
+  
+  \newpage
+  \section{検討課題}
+
+  \newpage
+  \noindent
+  \begin{huge}
+    まとめ・感想\\\\
+  \end{huge}
+
+  \newpage
+  \begin{huge}
+    参考文献\\\\
+  \end{huge}
+  % \noindent[]ページ名，\url{}，2025年12/25参照．\\
+\end{document}
