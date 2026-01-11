@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.22.0 (TeX Live 2025)  (format=lualatex 2025.6.15)  11 JAN 2026 17:02
+This is LuaHBTeX, Version 1.22.0 (TeX Live 2025)  (format=lualatex 2025.6.15)  11 JAN 2026 20:30
  restricted system commands enabled.
  file:line:error style messages enabled.
 **c:/Users/takky/Downloads/repo3_6/19_瀧口大地_exp6.tex
@@ -1252,15 +1252,31 @@ Removing  `ltj.listings_unicode' from `process_input_buffer'.
 [7]
 
 [8]
-Overfull \hbox (1.58679pt too wide) in paragraph at lines 386--390
+Removing  `ltj.process_input_buffer' from `process_input_buffer'.
+Inserting `ltj.listings_unicode' in `process_input_buffer'.
+Inserting `ltj.process_input_buffer' in `process_input_buffer'.
+Removing  `ltj.listings_unicode' from `process_input_buffer'.
+
+[9]
+
+[10]
+
+[11]
+
+[12]
+
+[13]
+
+[14]
+Overfull \hbox (1.58679pt too wide) in paragraph at lines 646--650
 [] \TU/ipaexm.ttf(0)/b/n/12 [1]Python |\JY3/mc/m/n/12 で |う |る |う |年 |を |判 |定 [] |カ |ウ |ン |ト [] |列 |挙 []  $\TU/lmtt/m/n/12 https://note.nkmk.me/python-calendar-
  []
 
 
 
-[9]
+[15]
 
-[10] (./19_瀧口大地_exp6.aux)
+[16] (./19_瀧口大地_exp6.aux)
  ***********
 LaTeX2e <2025-06-01> patch level 1
 L3 programming layer <2025-05-26>
@@ -1272,19 +1288,19 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 )
 
 Here is how much of LuaTeX's memory you used:
- 13585 strings out of 470203
- 195705,794899 words of node,token memory allocated
- 1301 words of node memory still in use:
-   11 hlist, 2 vlist, 5 rule, 1 local_par, 4 glue, 4 kern, 1 penalty, 1 margin_kern, 4 glyph, 282 attribute, 57 glue_spec, 38 attribute_list, 1 write, 14 user_defined nodes
-   avail lists: 1:41,2:47854,3:607,4:2545,5:519,6:68,7:3233,8:47,9:3062,10:40,11:10
- 41600 multiletter control sequences out of 65536+600000
- 57 fonts using 73409015 bytes
+ 13597 strings out of 470203
+ 305798,794899 words of node,token memory allocated
+ 1247 words of node memory still in use:
+   11 hlist, 2 vlist, 5 rule, 1 local_par, 4 glue, 4 kern, 1 penalty, 1 margin_kern, 4 glyph, 258 attribute, 57 glue_spec, 35 attribute_list, 1 write, 14 user_defined nodes
+   avail lists: 1:42,2:79161,3:760,4:4165,5:597,6:110,7:5178,8:47,9:4776,10:40,11:12
+ 41612 multiletter control sequences out of 65536+600000
+ 61 fonts using 73657519 bytes
  119i,8n,115p,1829b,913s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <c:/texlive/2025/texmf-dist/fonts/opentype/public/lm/lmmono12-regular.otf><c:/texlive/2025/texmf-dist/fonts/opentype/public/lm/lmmono10-regular.otf><c:/texlive/2025/texmf-dist/fonts/opentype/public/haranoaji/HaranoAjiGothic-Medium.otf><c:/texlive/2025/texmf-dist/fonts/truetype/public/ipaex/ipaexm.ttf><c:/texlive/2025/texmf-dist/fonts/opentype/public/haranoaji/HaranoAjiMincho-Regular.otf><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/latxfont/lcircle1.pfb>
-Output written on 19_瀧口大地_exp6.pdf (11 pages, 257881 bytes).
+Output written on 19_瀧口大地_exp6.pdf (17 pages, 290608 bytes).
 
-PDF statistics: 79 PDF objects out of 1000 (max. 8388607)
- 49 compressed objects within 1 object stream
+PDF statistics: 97 PDF objects out of 1000 (max. 8388607)
+ 61 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 131072)
  1 words of extra memory for PDF output out of 10000 (max. 100000000)
 

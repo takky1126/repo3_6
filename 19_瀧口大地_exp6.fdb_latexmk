@@ -1,7 +1,7 @@
 # Fdb version 4
-["lualatex"] 1768118575.46547 "c:/Users/takky/Downloads/repo3_6/19_瀧口大地_exp6.tex" "19_瀧口大地_exp6.pdf" "19_瀧口大地_exp6" 1768118577.33743 0
-  "19_瀧口大地_exp6.aux" 1768118577 2670 561f51767c6e72ac2ee30f643da872f1 "lualatex"
-  "19_瀧口大地_exp6.tex" 1768118559 14748 017950147ecc6e203dd35e56e4db0f77 ""
+["lualatex"] 1768131033.80523 "c:/Users/takky/Downloads/repo3_6/19_瀧口大地_exp6.tex" "19_瀧口大地_exp6.pdf" "19_瀧口大地_exp6" 1768131035.88142 0
+  "19_瀧口大地_exp6.aux" 1768131035 3953 dc7cbd0e178a6d71d0effb915517b0c6 "lualatex"
+  "19_瀧口大地_exp6.tex" 1768130999 24169 9e1f18266b93efa622714b1d758dfacc ""
   "C:/Users/takky/.texlive2025/texmf-var/luatexja/extra_haranoajigothic-medium.luc" 1749995791 321567 595c78b98e9a4d538d5671da34887716 ""
   "C:/Users/takky/.texlive2025/texmf-var/luatexja/extra_haranoajimincho-regular.luc" 1749995790 322628 d1289f77dbd4d0ca3b8b6e1c950bf7da ""
   "C:/Users/takky/.texlive2025/texmf-var/luatexja/extra_ipaexmincho.luc" 1749995791 320653 b3a79d622ec0923513edd1f2595c1cb6 ""
@@ -24,7 +24,7 @@
   "C:/texlive/2025/texmf-var/luatex-cache/generic/fonts/otl/lmroman12-bold.luc" 1746341011 128291 eeccf417edeba4722c76b2300fb809fa ""
   "C:/texlive/2025/texmf-var/luatex-cache/generic/fonts/otl/lmroman12-regular.luc" 1746340597 127662 7fe860cf03242b52d157b393df29d862 ""
   "C:/texlive/2025/texmf-var/luatex-cache/generic/names/luaotfload-names.luc.gz" 1746340594 66552 21699efcfbc064a74d26c978615c0bd9 ""
-  "c:/Users/takky/Downloads/repo3_6/19_瀧口大地_exp6.tex" 1768118559 14748 017950147ecc6e203dd35e56e4db0f77 ""
+  "c:/Users/takky/Downloads/repo3_6/19_瀧口大地_exp6.tex" 1768130999 24169 9e1f18266b93efa622714b1d758dfacc ""
   "c:/texlive/2025/texmf-dist/fonts/opentype/public/haranoaji/HaranoAjiGothic-Medium.otf" 1746339295 4741344 b4cb653e8a646847598c1b41780451dc ""
   "c:/texlive/2025/texmf-dist/fonts/opentype/public/haranoaji/HaranoAjiMincho-Regular.otf" 1746339295 6420628 de3818622611c4aa9412be05bfa54ad6 ""
   "c:/texlive/2025/texmf-dist/fonts/opentype/public/lm/lmmono10-regular.otf" 1746339396 64684 c6f5a48921f83c1a51d9384f785ddd5a ""
@@ -33,9 +33,11 @@
   "c:/texlive/2025/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm" 1746339166 988 bdf658c3bfc2d96d3c8b02cfc1c94c20 ""
   "c:/texlive/2025/texmf-dist/fonts/tfm/public/ascmac/ascgrp.tfm" 1746339178 448 9a1f3a95c3a7e2681aa6eefcf410b7ac ""
   "c:/texlive/2025/texmf-dist/fonts/tfm/public/cm/cmex10.tfm" 1746339213 992 662f679a0b3d2d53c1b94050fdaa3f50 ""
+  "c:/texlive/2025/texmf-dist/fonts/tfm/public/cm/cmmi10.tfm" 1746339213 1528 abec98dbc43e172678c11b3b9031252a ""
   "c:/texlive/2025/texmf-dist/fonts/tfm/public/cm/cmmi12.tfm" 1746339213 1524 4414a8315f39513458b80dfc63bff03a ""
   "c:/texlive/2025/texmf-dist/fonts/tfm/public/cm/cmmi6.tfm" 1746339213 1512 f21f83efb36853c0b70002322c1ab3ad ""
   "c:/texlive/2025/texmf-dist/fonts/tfm/public/cm/cmmi8.tfm" 1746339213 1520 eccf95517727cb11801f4f1aee3a21b4 ""
+  "c:/texlive/2025/texmf-dist/fonts/tfm/public/cm/cmr10.tfm" 1746339213 1296 45809c5a464d5f32c8f98ba97c1bb47f ""
   "c:/texlive/2025/texmf-dist/fonts/tfm/public/cm/cmr12.tfm" 1746339213 1288 655e228510b4c2a1abe905c368440826 ""
   "c:/texlive/2025/texmf-dist/fonts/tfm/public/cm/cmr6.tfm" 1746339213 1300 b62933e007d01cfd073f79b963c01526 ""
   "c:/texlive/2025/texmf-dist/fonts/tfm/public/cm/cmr8.tfm" 1746339213 1292 21c1c5bfeaebccffdb478fd231a0997d ""

@@ -200,5 +200,9 @@ INPUT C:/texlive/2025/texmf-var/luatex-cache/generic/fonts/otl/lmmono12-regular.
 INPUT C:/Users/takky/.texlive2025/texmf-var/luatexja/extra_lmmono12-regular.luc
 INPUT C:/texlive/2025/texmf-var/luatex-cache/generic/fonts/otl/lmmono10-regular.luc
 INPUT C:/Users/takky/.texlive2025/texmf-var/luatexja/extra_lmmono10-regular.luc
+INPUT c:/texlive/2025/texmf-dist/fonts/tfm/public/cm/cmmi10.tfm
+INPUT c:/texlive/2025/texmf-dist/fonts/tfm/public/cm/cmsy10.tfm
+INPUT c:/texlive/2025/texmf-dist/fonts/tfm/public/cm/cmex10.tfm
+INPUT c:/texlive/2025/texmf-dist/fonts/tfm/public/cm/cmr10.tfm
 INPUT ./19_瀧口大地_exp6.aux
 INPUT c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/latxfont/lcircle1.pfb
