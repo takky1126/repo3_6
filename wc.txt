@@ -1,0 +1,9 @@
+file: .\fruit.dat
+lines: 7
+words: 12
+chars: 95
+
+file: .\vegetable.dat
+lines: 3
+words: 10
+chars: 79

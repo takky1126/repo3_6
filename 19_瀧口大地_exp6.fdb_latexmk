@@ -1,7 +1,7 @@
 # Fdb version 4
-["lualatex"] 1768132355.56882 "c:/Users/takky/Downloads/repo3_6/19_瀧口大地_exp6.tex" "19_瀧口大地_exp6.pdf" "19_瀧口大地_exp6" 1768132357.62999 0
-  "19_瀧口大地_exp6.aux" 1768132357 4114 ade4611f5de0582d776d7847c7d80fe5 "lualatex"
-  "19_瀧口大地_exp6.tex" 1768132350 25157 998a36a08cb305b3d28b02a43a72d3cd ""
+["lualatex"] 1768142881.87231 "c:/Users/takky/Downloads/repo3_6/19_瀧口大地_exp6.tex" "19_瀧口大地_exp6.pdf" "19_瀧口大地_exp6" 1768142884.09044 0
+  "19_瀧口大地_exp6.aux" 1768142883 4979 19575955e7601910753760e52edbf073 "lualatex"
+  "19_瀧口大地_exp6.tex" 1768142878 30453 21038616e2e61c33c612e237c60f288c ""
   "C:/Users/takky/.texlive2025/texmf-var/luatexja/extra_haranoajigothic-medium.luc" 1749995791 321567 595c78b98e9a4d538d5671da34887716 ""
   "C:/Users/takky/.texlive2025/texmf-var/luatexja/extra_haranoajimincho-regular.luc" 1749995790 322628 d1289f77dbd4d0ca3b8b6e1c950bf7da ""
   "C:/Users/takky/.texlive2025/texmf-var/luatexja/extra_ipaexmincho.luc" 1749995791 320653 b3a79d622ec0923513edd1f2595c1cb6 ""
@@ -24,7 +24,7 @@
   "C:/texlive/2025/texmf-var/luatex-cache/generic/fonts/otl/lmroman12-bold.luc" 1746341011 128291 eeccf417edeba4722c76b2300fb809fa ""
   "C:/texlive/2025/texmf-var/luatex-cache/generic/fonts/otl/lmroman12-regular.luc" 1746340597 127662 7fe860cf03242b52d157b393df29d862 ""
   "C:/texlive/2025/texmf-var/luatex-cache/generic/names/luaotfload-names.luc.gz" 1746340594 66552 21699efcfbc064a74d26c978615c0bd9 ""
-  "c:/Users/takky/Downloads/repo3_6/19_瀧口大地_exp6.tex" 1768132350 25157 998a36a08cb305b3d28b02a43a72d3cd ""
+  "c:/Users/takky/Downloads/repo3_6/19_瀧口大地_exp6.tex" 1768142878 30453 21038616e2e61c33c612e237c60f288c ""
   "c:/texlive/2025/texmf-dist/fonts/opentype/public/haranoaji/HaranoAjiGothic-Medium.otf" 1746339295 4741344 b4cb653e8a646847598c1b41780451dc ""
   "c:/texlive/2025/texmf-dist/fonts/opentype/public/haranoaji/HaranoAjiMincho-Regular.otf" 1746339295 6420628 de3818622611c4aa9412be05bfa54ad6 ""
   "c:/texlive/2025/texmf-dist/fonts/opentype/public/lm/lmmono10-regular.otf" 1746339396 64684 c6f5a48921f83c1a51d9384f785ddd5a ""

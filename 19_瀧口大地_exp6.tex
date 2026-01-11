@@ -272,7 +272,7 @@
   フォーマットを活用できる．
 
   \subsubsection{プログラム}
-  アイデアに則って組んだ九九表を出力するプログラムを以下に示す．
+  アイデアに則って組んだ九九表を出力するプログラムを以下に示す．end=''は改行無しを示す．
 
   \begin{figure}[H]
   \begin{lstlisting}[title={九九表を出力するプログラム}]
@@ -283,7 +283,7 @@
     # 1行目
     print(f.format(" "),end='')
     for i in range(1,10):
-        st = " " + (str)(i)
+        st = " " + (str)(i) # C++キャストも動く,というかnの意味よ
         print(n.format(st),end='')
 
     # 2行目
@@ -332,12 +332,12 @@
   　本実験課題では入力された年が閏年かどうかを判定するプログラムを作成する．
 
   \subsubsection{アイデア[1]}
-  Pythonにはcalenderモジュールというものがあり，これを用いることで
+  Pythonにはcalendarモジュールというものがあり，これを用いることで
   1行のコードで与えられた数値型の年が閏年かどうかを判定できる．このモジュールを
   用いて本課題を解決する．
 
   \subsubsection{コード}
-  前述のcalenderモジュールを用いて作成したコードを以下に示す．
+  前述のcalendarモジュールを用いて作成したコードを以下に示す．
 
   \begin{figure}[H]
   \begin{lstlisting}[title={閏年判定プログラム}]
@@ -353,8 +353,8 @@
   \end{lstlisting}
   \end{figure}
 
-  コードの1行目ではcalenderモジュールをインポートしており，3行目で年数の入力処理，
-  4行目で入力の数値型変換，6行目以降でcalenderモジュールを用いた閏年判定と出力
+  コードの1行目ではcalendarモジュールをインポートしており，3行目で年数の入力処理，
+  4行目で入力の数値型変換，6行目以降でcalendarモジュールを用いた閏年判定と出力
   を行っている．
 
   \subsubsection{結果}
@@ -365,10 +365,10 @@
     \begin{center}
     \begin{screen}
     \begin{verbatim}
-    > python test.py
+    > python k011.py
     何年（YYYY）：2025
     2025 年は平年です。
-    > python test.py
+    > python k011.py
     何年（YYYY）：2020
     2020 年は閏年です。
     \end{verbatim}
@@ -398,7 +398,7 @@
 
   他実験と同様に，本ソートプログラムの説明を各行で行う．1行目のdata配列は前述した
   セット（配列）を格納する配列である．3,4行目はファイルの名前とソート順の入力である．
-  6～11行目は入力されたファイルをwith文で閲覧('r')し，for分を用いて行ごとに処理を
+  6～11行目は入力されたファイルをwith文で閲覧('r')し，for文を用いて行ごとに処理を
   行っている．処理の中身としては":"の前後で情報を区切り，それらをdate,tempとして
   data配列の中に格納している．ここで，tempはソートの際に数値として扱うためfloat型に
   変換している．15行目はコメントにある通り，ソート順を表す入力のRuleが1ならTrue,
@@ -406,7 +406,7 @@
   keyには扱うデータを参照させるのだが，データの位置を関数の出力しか指定できない．
   そのため簡易関数lambdaを使用してdataの1個目，つまり温度（0個目が日付）を参照して
   いる．21,22行目はコマンドプロンプト用にソートされたdata配列の中身を":"を挟み
-  printで出力している．25～27行目はwith文の書き込み('W'で)datファイルを開き
+  printで出力している．25～27行目はwith文の書き込み('w'で)datファイルを開き
   data配列の中身を上書きで書き込んでいる．
 
   \begin{figure}[H]
@@ -443,7 +443,7 @@
 
   \subsubsection{結果}
   まず指導書の出力例に則ってコマンドプロンプト上の出力結果を示す．
-  最初にtempareture.datと1を入力し降順ソートを行った結果を図
+  最初にtemperature.datと1を入力し降順ソートを行った結果を図
   \ref{k023.pyの実行結果_cmd_1}に示す．
 
   \begin{figure}[H]
@@ -451,7 +451,7 @@
     \begin{center}
     \begin{screen}
     \begin{verbatim}
-    > python test.py
+    > python k023.py
     ファイル：temperature.dat
     ルール（昇順：0,降順：1）1
     2015/Aug/08: 99.27
@@ -494,7 +494,7 @@
 
   図\ref{k023.pyの実行結果_cmd_1}を見るとコマンドプロンプトへの出力は
   正しく降順ソートされたと言える．次にこの状態のままもう一度k023を実行し
-  tempareture.datと0を入力し昇順ソートを行ったコマンドプロンプトの結果を
+  temperature.datと0を入力し昇順ソートを行ったコマンドプロンプトの結果を
   図\ref{k023.pyの実行結果_cmd_0}に示す．
 
   \begin{figure}[H]
@@ -502,7 +502,7 @@
     \begin{center}
     \begin{screen}
     \begin{verbatim}
-    > python test.py
+    > python k023.py
     ファイル：temperature.dat
     ルール（昇順：0,降順：1）0
     2015/Aug/22: 12.58
@@ -545,7 +545,7 @@
 
   図\ref{k023.pyの実行結果_cmd_1}からdata配列の更新とコマンドプロンプトへの
   出力が正しく行えたと言える．また，ファイルの更新が行えているかを確認する
-  ために，図\ref{k023.pyの実行結果_cmd_1}時点のtempareture.datファイルと
+  ために，図\ref{k023.pyの実行結果_cmd_1}時点のtemperature.datファイルと
   図\ref{k023.pyの実行結果_cmd_0}時点のtemperature.datファイルを記録していた．
   これらを図\ref{k023.pyの実行結果_file_1}と図\ref{k023.pyの実行結果_file_0}に
   示す．
@@ -598,9 +598,6 @@
     \begin{center}
     \begin{screen}
     \begin{verbatim}
-    > python test.py
-    ファイル：temperature.dat
-    ルール（昇順：0,降順：1）0
     2015/Aug/22: 12.58
     2015/Aug/31: 30.12
     2015/Aug/14: 31.07
@@ -651,6 +648,143 @@
   この例では最後の1つを除く全てのファイルであるfruit.datとvegetable.datの2つが
   カウントされるファイルであり，最後のwc.txtがカウントした結果が格納される
   ファイルである．
+
+  \subsubsection{アイデア}
+  入力を指定通りに行うためにsysモジュールのsys.argvを用いる（参考:指導書）．
+  カウントされるファイルをこれまでと同様にwith文で読み込み，readlines関数で
+  テキスト全体を読み取る．そこから行数，空白や改行のsplitによる単語数，
+  単純な文字数を出力する．また，リストの配列を用いるため最終出力はリストを並べて出力
+  できるjoinも用いる．最後にこれまでと同様にwith文の書き込みモードでカウントした
+  データを一番後ろのファイルに格納する．
+
+  \subsubsection{プログラム}
+  以下にアイデアに準じたプログラムを示す．
+
+  アイデアで述べた通り，1行目でsysモジュールをインポートし，3行目のsys.argv[1:-1]
+  （ファイル指定の最初から最後の1個手前まで）を読み込むファイル，4行目sys.argv
+  [-1]（ファイル指定の最後）を書き込むファイルとしている．6行目にリストを入れる配列
+  resultsを定義している．8～20行目でアイデアにて述べた通りに行数，単語数，文字数を
+  カウントしresultsにリストとして入れている．これを拡張for文で読み込むファイルの回数
+  分行う．最後にjoinを用いてresultsコマンドプロンプトでの出力，ファイルへの書き込み
+  を行い処理が終了する．
+
+  \begin{figure}[H]
+  \begin{lstlisting}[title={コマンドライン引数を用いたプログラム}]
+    import sys
+
+    output_file = sys.argv[-1]
+    input_files = sys.argv[1:-1]
+
+    results = []
+
+    for filename in input_files:
+        with open(filename, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+            
+            l_count = len(lines)
+            w_count = sum(len(line.split()) for line in lines)
+            c_count = sum(len(line) for line in lines)
+            
+            # データの整形
+            results.append(f"file: {filename}")
+            results.append(f"lines: {l_count}")
+            results.append(f"words: {w_count}")
+            results.append(f"chars: {c_count}\n")
+
+    # --- 追加：cmd上への表示とファイル書き込み ---
+    output_text = "\n".join(results)
+    print(output_text)
+
+    # ファイルに保存
+    with open(output_file, 'w', encoding='utf-8') as f_out:
+        f_out.write(output_text)
+  \end{lstlisting}
+  \end{figure}
+
+  \subsubsection{結果}
+  プログラムを実行した結果を示す．今回はfruit.datとvegetable.datに資料にあった
+  overlap.datから一部抜き出した内容を書き込みカウントされるファイルとして扱う．
+  そのため以下に各datファイルの中身を示す．
+
+  \begin{figure}[H]
+  \begin{lstlisting}[title={fruit.dat}]
+    raspberry raspberry 
+    grape 
+    peach 
+    cherry cherry cherry 
+    grape cherry strawberry 
+    peach 
+    apple 
+  \end{lstlisting}
+  \end{figure}
+
+  \begin{figure}[H]
+  \begin{lstlisting}[title={vegetable.dat}]
+    cherry mandarin orange apricot 
+    apple banana apple 
+    strawberry strawberry grape
+  \end{lstlisting}
+  \end{figure}
+
+  これらを用いてプログラムk032を実行した際のコマンドプロンプト出力を図
+  \ref{k032.pyの実行結果_cmd}に示す．  
+  この時，vegetable.datの文字数が79となっているが，改行を除いた文字数が30+18+27
+  =75文字であり改行は1文字で合計77文字となる．計算が合わないが良くファイルを確認
+  すると最後の行以外の最後に半角空白があった．これで合計77となり計算が成り立つ．
+  fruit.datでも同様に処理が行われているため，このような結果になったと分かる．思わぬ
+  ハプニングだったが理論的に納得できた．以上のことから，内部の処理とコマンドプロンプト
+  出力は正しく動作したと言える．
+
+  \begin{figure}[H]
+    \small
+    \begin{center}
+    \begin{screen}
+    \begin{verbatim}
+    > python k032.py .\fruit.dat .\vegetable.dat wc.txt
+    file: .\fruit.dat
+    lines: 7
+    words: 12
+    chars: 95
+
+    file: .\vegetable.dat
+    lines: 3
+    words: 10
+    chars: 79
+    \end{verbatim}
+    \end{screen}
+    \end{center} 
+    \caption{k032.pyの実行結果(cmd)}
+    \label{k032.pyの実行結果_cmd}
+  \end{figure}
+
+  また，出力ファイルwc.txtの中身も図\ref{k032.pyの実行結果_file}に示し確認する．
+
+  \begin{figure}[H]
+    \small
+    \begin{center}
+    \begin{screen}
+    \begin{verbatim}
+    file: .\fruit.dat
+    lines: 7
+    words: 12
+    chars: 95
+
+    file: .\vegetable.dat
+    lines: 3
+    words: 10
+    chars: 79
+    \end{verbatim}
+    \end{screen}
+    \end{center} 
+    \caption{k032.pyの実行結果(ファイル)}
+    \label{k032.pyの実行結果_file}
+  \end{figure}
+
+  これでファイル出力も問題なく行えていることが分かった．
+
+  以上のことから本実験課題のプログラムは想定・指定通りに動作したと言える．
+
+  \subsection{総合課題(6.10.6)}
 
   %更新行
 
