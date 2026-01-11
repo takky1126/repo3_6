@@ -1,0 +1,1174 @@
+\documentclass[platex,dvipdfmx,12pt]{jsarticle}
+%使ってるのがplatexだからクラス指定はplatex.間違えてもuplatexにしないように
+
+\usepackage{graphicx}
+\usepackage[hyphens]{url}
+\usepackage{otf}
+\usepackage{multirow}
+\usepackage{amsmath}
+\usepackage{here}
+\usepackage{geometry}
+\usepackage{ascmac}
+\usepackage{color}
+
+\usepackage{textcomp}
+
+\usepackage{listings} %日本語のコメントアウトをする場合jvlisting（もしくはjlisting）が必要
+%ここからソースコードの表示に関する設定
+\lstset{
+  basicstyle={\ttfamily},              % 基本:等幅フォント
+  identifierstyle={\small},            % 識別子
+  commentstyle={\smallitshape},        % コメント:斜体
+  keywordstyle={\small\bfseries},     % キーワード:太字
+  stringstyle={\small\ttfamily},      % 文字列
+  frame={tb},                           % 上部と下部に線を表示
+  breaklines=true,                      % 行が長い場合に折り返す
+  columns=[l]{fullflexible},            % 列幅を自動調整する（見た目が良くなる）
+  numbers=left,                         % 行番号を左側に表示
+  xrightmargin=0zw,                     % 右マージンのサイズ．
+  xleftmargin=1.6zw,                    % 左マージンのサイズ．行番号が2桁でも行左端からはみ出ない値．
+  numberstyle={\scriptsize},           % 行番号のスタイル．スクリプトサイズのフォントを使用
+  stepnumber=1,                         % 何行ごとに行番号を表示するか
+  numbersep=1zw,                        % 行番号とソースコードの間の距離
+  lineskip=-1.4ex,                      % ソースコードの行間（結構詰め気味）  
+  morestring=[b]",                     %日本語等のStringを正常にダブルクオーテーションで囲む
+  showstringspaces=false,               %Stringに囲まれた部分ではスペースがSymbol付きで表示されるのでそれを消す
+  language=Python,
+  backgroundcolor=\color{white},
+}
+\renewcommand{\lstlistingname}{ソースコード}
+
+\geometry{left=20mm,right=20mm,top=20mm,bottom=30mm}
+\renewcommand{\baselinestretch}{1.2}
+
+\makeatletter %sectionをchapterっぽくする.
+\renewcommand{\presectionname}{第}
+\renewcommand{\postsectionname}{章}%はコメントですがつけ忘れると\section*でバグります
+
+% 図番号を1.5のようにする
+\renewcommand{\theequation}{\arabic{section}.\arabic{equation}}
+\renewcommand{\thefigure}{\arabic{section}.\arabic{figure}}
+\renewcommand{\thetable}{\arabic{section}.\arabic{table}}
+
+\renewcommand{\section}{%
+\clearpage
+\@startsection{section}{1}{\z@}%
+{\Cvs \@plus.5\Cdp \@minus.2\Cdp}% 見出し前に付けられる空白量
+{.5\Cvs \@plus.3\Cdp}% 見出し後に付けられる垂直方向の空白量
+{\normalfont\LARGE\headfont\raggedright}}% 見出しのスタイル
+\makeatother
+
+
+\begin{document}
+
+\begin{titlepage}
+\begin{center}
+\begin{huge}
+情報工学実験 \ajRoman{2} 第5回レポート \linebreak 
+スクリプト言語を用いたテキストファイル \linebreak
+処理に関する実験
+\end{huge}
+\end{center}
+
+\vspace{6em}
+
+\begin{LARGE}
+\begin{flushright}
+３年情報工学科 35番 \linebreak \vspace{1em}
+増井 崇
+\end{flushright}
+\end{LARGE}
+
+\vspace{4em}
+
+\begin{Large}
+\begin{tabular}{ll}
+提出期限 : & 2025年02月09日（日）23:59 \\
+提出日 : & 2025年02月09日（日）00:50 \\
+\end{tabular}
+
+\vspace{2em}
+
+共同実験者：1班
+
+\vspace{1em}
+
+\begin{tabular}{ll}
+01番 & 芥川 光月 \\
+05番 & ウヌルー \\
+06番 & 宇野 志保 \\
+07番 & 梅崎 千紘 \\
+34番 & 前田 貴亮 \\
+36番 & 増本 綾大\\
+\end{tabular}
+
+\end{Large}
+
+\end{titlepage}
+
+\section*{アブストラクト}
+\thispagestyle{empty}
+本レポート及び実験では，主にスクリプト言語の基礎的な考え方や，Pythonの基本文法から外部モジュールを用いた応用的な使用方法の学習を行った．
+まず，Pythonを用いて四則演算及び剰余算を行うプログラムを作成した．
+除算を行うときには，Pythonの浮動小数点数の仕様により，誤差が生じることがあるため，その点に注意しながらプログラムを作成した．
+IEEE754を用いてるため，無限小数を表現することができないため，誤差が生じる可能性を示した．
+次に，Pythonを用いて九九の表を出力するプログラムを作成した．
+この際には，for文の特徴をうまく利用した，二重for文を利用して，九九の表を出力するプログラムを作成した．
+その後，Pythonを用いて開始時刻と終了時刻の差を計算するプログラムを作成した．
+差を計算する際には，日をまたいでいる場合も考え，その場合の計算方法を考えた．
+最後に，Pythonを用いてテキストファイルを読み込み，その内容を処理するプログラムを作成した．
+特に，処理の際にはreモジュールや，openpyxl, matplotlibなどの外部モジュールを作成した．
+アクセスログを解析する際には，もとのパターンを正規表現で抽出し，その結果をグラフ化することで，データの可視化を行った．
+また，グラフ化にもExcel上で表示するものとopenpyxlを用いてPython上で表示するものの二通りを作成した．
+以上の方法で，アクセスログを解析し各IPアドレスのアクセス回数をグラフ化することができた．
+
+
+
+\section{実験目的}
+\setcounter{page}{1}
+本実験では，スクリプト言語の文法や基本的な構造についてPtyhonを用いて学習し，Pythonを用いて様々なデータ整理や加工，テキストファイル処理およびツールの基本的な作成方法について習得することを目的とします．
+
+またコマンドライン引数の扱い方や，PythonとExcelの連携方法を理解し，適切に処理できるようにする．
+
+\section{実験結果}
+\subsection{スクリプトプログラミングの学習(6.10.1)}
+\subsubsection{プログラムのアイデア}
+four\_arithmetic.pyというファイル名で実験を行う．
+
+本実験では，Python上で実行する計算式を人間が読みやすい普段の計算式に直して，文字列として出力し，その文字列とその文字列を計算式として解釈した場合の結果を出力するプログラムを作成する．
+
+まず，簡単な処理の流れは以下のとおりである．
+
+\begin{enumerate}
+  \item 計算式からイコールまでを文字列として出力する．
+  \item 表示した計算式と同等の式をPython上で実行し，その結果を得る．
+  \item 結果と，計算式を表す文字列をprint関数に渡して，連続して出力させる．
+  print関数はセパレータの初期値が空白であるため，二つの値は空白を間に挟んで連結して出力する．
+\end{enumerate}
+
+\subsubsection{作成したプログラム}
+
+作成したプログラムはfour\_arithmetic.pyである．
+
+\begin{figure}[H]
+\begin{lstlisting}[caption={four\_arithmetic.py}]
+print("10 + 3 =", 10+3)
+print("10 - 3 =", 10-3)
+print("10 * 3 =", 10*3)
+print("10 / 3 =", 10/3)
+print("10 % 3 =", 10%3)
+print("10 // 3 =", 10//3)
+\end{lstlisting}
+\end{figure}
+
+
+プログラムのアイデアで紹介した通り，計算式を文字列として出力し，その計算式をPython上で実行して結果を出力している．
+また，Pythonで計算結果が無限小数となる割り算を表現すると，誤差が生じることがある．
+これを解消するためには，decimalモジュールなどを利用する必要があるが，実験範囲外になるため，本項ではそのまま出力することとした．
+
+\subsubsection{結果}
+four\_arithmetic.pyの出力結果は図\ref{fig:6-10-1-result}に示すとおりである．
+
+\begin{figure}[H]
+\begin{center}
+\begin{screen}
+\begin{verbatim}
+>python four_arithmetic.py
+10 + 3 = 13
+10 - 3 = 7
+10 * 3 = 30
+10 / 3 = 3.3333333333333335
+10 % 3 = 1
+10 // 3 = 3
+>
+\end{verbatim}
+\end{screen}
+\end{center} 
+\caption{four\_arithmetic.pyの実行結果} 
+\label{fig:6-10-1-result}
+\end{figure}
+
+% 実験結果についてをまとめる
+実際に，四則演算の式を出力し，'='イコールのあとに続けてその計算式の計算結果を出力することができている．
+
+このとき，10/3の結果が3.3333333333333335となっているが，これはPythonの浮動小数点数の計算の仕様によるものである．
+Pythonは小数点の保存に，IEEE754を用いてるが，これはあくまでも53ビットで実数部を表現するため，無限小数を表現することができない．
+つまり，計算結果が無限小数の場合，その値に最も近い2進数の値を計算結果として返すため，誤差が生じることがある．
+その誤差が，最終桁が5となっている理由であると考察できる．
+そのため，この計算結果もプログラムの動作としては正常である．
+
+従って，仕様通りでありかつプログラムのアイデア通りの出力であるため，本実験は成功である．
+
+\subsection{インデントと基本構文の習得(6.10.2)}
+\subsubsection{プログラミングのアイデア}
+% プログラミングのアイデアをまとめる
+k001.pyというファイル名で実験を行う．
+
+本実験では，指定されたフォーマットに従って，要件を満たすプログラムを作成する．
+
+まず，その要件およびフォーマットは次に示すとおりである．
+
+\begin{enumerate}
+  \item 九九の表を表示
+  \begin{enumerate}
+    \item 横線'-'は半角のマイナス(ハイフン)を使うこと
+    \item 縦線'|'は半角のパイプ記号を使うこと
+    \item 縦線と横線の交差点'+'には半角のプラスを用いること
+  \end{enumerate}
+\end{enumerate}
+
+実行した際に次の図\ref{fig:6-10-2-format}になるようにしたい．
+
+\begin{figure}[H]
+\begin{center}
+\begin{screen}
+\begin{verbatim}
+   |  1  2  3  4  5  6  7  8  9
+---+---------------------------
+  1|  1  2  3  4  5  6  7  8  9
+  2|  2  4  6  8 10 12 14 16 18
+  3|  3  6  9 12 15 18 21 24 27
+  4|  4  8 12 16 20 24 28 32 36
+  5|  5 10 15 20 25 30 35 40 45
+  6|  6 12 18 24 30 36 42 48 54
+  7|  7 14 21 28 35 42 49 56 63
+  8|  8 16 24 32 40 48 56 64 72
+  9|  9 18 27 36 45 54 63 72 81
+\end{verbatim}
+\end{screen}
+\end{center} 
+\caption{出力したい九九の表} 
+\label{fig:6-10-2-format}
+\end{figure}
+
+二重ループを用いて，縦の数値と横の数値をそれぞれ1から9まで増分させ，それらの積の値を出力するようにしたい．
+ただし，出力する際にはフォーマットが崩れないようにString.format()関数を用いる．
+最大の桁数は81などの２桁であるため，余裕をもって一つの数値当たり3マス分出力するようにする．
+また本項では出力結果を各マスの右詰めで出力する．
+
+また縦横のラベル部分は，縦横の数値を1から9の間で増分させるのではなく，縦の数値は-1から9の間を1ずつ増分させ，横の数値は1から9の間を1ずつ増分させることで対応した．
+特に，縦の値が-1であるときは，列を示すラベル部分を出力し，0の時はハイフンやプラスを出力し，1以上の数値では掛け算を始めるという流れである．
+また各行のラベルと，ラベル部分と計算結果の部分を区切るためのパイプは必ず出力する必要があるため，横のループが始める前に出力する．
+その次に，横の数値と縦の数値で掛け算を始めるという流れである．
+
+
+\subsubsection{作成したプログラム}
+% 作成したプログラムをまとめる
+
+作成したk001.pyは次の通りである．
+
+\begin{figure}[H]
+\begin{lstlisting}[caption={k001.py}]
+for i in range(-1,10,1):
+    if i==-1:
+        row = ["{tmp:3}".format(tmp=" "), "|"]
+    elif i==0:
+        row = ["{tmp:3}".format(tmp="-"*3), "+"]
+    else:
+        row = ["{tmp:3}".format(tmp=i), "|"] 
+
+    for j in range(1, 10, 1):
+        if i==-1:
+            row.append("{tmp:3}".format(tmp=j))
+        elif i==0:
+            row.append("{tmp:3}".format(tmp="-"*3))
+        else:
+            row.append("{tmp:3}".format(tmp=i*j))
+        
+print("".join(row))
+\end{lstlisting}
+\end{figure}
+
+プログラムのアイデアの中で説明した，縦の値はiが示しており，横の値はjが示している．
+つまり，このプログラムは先の図\ref{fig:6-10-2-format}を一行ずつ出力している．
+range関数はrange(開始値, 終了値, 増分)という形式で開始値から終了値までを増分ごとに区切ったイテラブルオブジェクトを戻り値として持つ関数である．
+この時，終了値は含まれないことに注意する必要がある．
+そのため，range(-1, 10, 1)というのは，-1から10までの値を1ごとに区切ったイテラブルオブジェクトを返していることが分かる．
+つまり，iの取り得る値は$-1 <= i <= 9$ということになる．
+
+\subsubsection{結果}
+% 結果をまとめる
+k001.pyの出力結果は図\ref{fig:6-10-2-result}に示すとおりである．
+\begin{figure}[H]
+\begin{center}
+\begin{screen}
+\begin{verbatim}
+>python k001.py
+   |  1  2  3  4  5  6  7  8  9
+---+---------------------------
+  1|  1  2  3  4  5  6  7  8  9
+  2|  2  4  6  8 10 12 14 16 18
+  3|  3  6  9 12 15 18 21 24 27
+  4|  4  8 12 16 20 24 28 32 36
+  5|  5 10 15 20 25 30 35 40 45
+  6|  6 12 18 24 30 36 42 48 54
+  7|  7 14 21 28 35 42 49 56 63
+  8|  8 16 24 32 40 48 56 64 72
+  9|  9 18 27 36 45 54 63 72 81 
+>
+\end{verbatim}
+\end{screen}
+\end{center} 
+\caption{k001.pyの実行結果}
+\label{fig:6-10-2-result}
+\end{figure}
+
+この出力では，実際に半角3マスを1つのマスとして，各マスに掛け算の結果を格納できている．
+また縦横のラベルに関しても1から9までを正常に出力できている．
+加えて，縦線は半角のパイプ記号で，横線は半角のハイフンで，縦横の交点は半角のプラス記号で出力できている．
+
+以上の結果より，本プログラムは仕様通り及びプログラムのアイデア通りの動きをしているため，実験は成功である．
+
+\subsection{基本構文と標準入力の習得(6.10.3)}
+\subsubsection{プログラミングのアイデア}
+% プログラミングのアイデアをまとめる
+課題3のプログラムは，時間計算である．ファイル名はk013.pyである．
+今回は，入力値である終了時刻が開始時刻に対して，次の日を示している可能性を考慮するために，datetime型を用いた引き算により時間計算を行うのではなく，一般的な引き算を用いて時間計算を行う．
+特に，終了日時が次の日を示している可能性を考慮するために，今回は流れで計算する．
+
+\begin{enumerate}
+  \item 開始時刻と終了時刻を，それぞれの日付の00：00からの経過分数に変換する．
+  \item 終了時刻の分数が開始時刻の分数より小さかった場合，終了時刻の時間に$24\times60 = 1440分$を足して，開始時刻の日付の00：00からの経過分数に変換する．
+  \item 終了時刻の分数から開始時刻の分数を引いて，最後にそれらを時間と分に変換して出力する．
+\end{enumerate}
+
+この条件をif文の判定を用いて実装する．
+
+\subsubsection{作成したプログラム}
+% 作成したプログラムをまとめる
+
+\begin{figure}[H]
+\begin{lstlisting}[caption={k013.py}]
+d1 = list(map(int, input("開始時間（HH:MM）：").split(":")))
+d2 = list(map(int, input("終了時刻（HH:MM）：").split(":")))
+
+d1_min = d1[0]*60 + d1[1]
+d2_min = d2[0]*60 + d2[1]
+
+if d1_min > d2_min:
+    d2_min += 24*60
+    
+time_diff = d2_min - d1_min
+
+print("経過時間：{} 時間{} 分".format(time_diff//60, time_diff%60))
+\end{lstlisting}
+\end{figure}
+
+プログラムのアイデアで紹介した通り，終了時刻が開始時刻から見て次の日の時間であることを条件式で判定している．
+次に，終了時刻が次の日であると判断した場合は，終了時刻のhhに対して1440を足して，開始時刻の日付の00時00分に対する相対的な分数に変換している．
+これにより，単純な引き算で時間差を計算できるようにしている．
+
+\subsubsection{結果}
+% 結果をまとめる
+
+まず，開始時刻と終了時刻が同じ日の場合の出力結果を図\ref{fig:6-10-3-1-result}に示す．
+\begin{figure}[H]
+\begin{center}
+\begin{screen}
+\begin{verbatim}
+>python  k013.py
+開始時刻（HH:MM）：00:00 
+終了時刻（HH:MM）：00:10
+経過時間：0 時間10 分
+>
+\end{verbatim}
+\end{screen}
+\end{center} 
+\caption{k013.pyの実行結果(開始時刻と終了時刻が同じ日の場合)}
+\label{fig:6-10-3-1-result}
+\end{figure}
+
+実際に，00:00から00:10の経過時間は，開始時刻と終了時刻が同日であるため，経過時間が10分であるという出力は，正しい出力である．
+
+次に，開始時刻と終了時刻が異なる日の場合の出力結果を図\ref{tab:6-10-3-2-result}に示す．
+
+\begin{table}[htbp]
+  \centering
+  \caption{開始時刻と終了時刻が異なる日の場合の出力結果}
+  \label{tab:6-10-3-2-result}
+  \begin{tabular}{c|c|c|c}
+    \hline
+    % ここにカラムを入力
+    開始時刻 & 終了時刻 & 経過時間 & 実際の経過時間 \\
+    \hline
+    % ここに各セルのデータを入力
+    00:10 & 00:00 & 23 時間10 分 & 23 時間10 分 \\
+    17:00 & 14:50 & 21 時間10 分 & 21 時間10 分 \\
+    \hline
+  \end{tabular}
+\end{table}
+
+開始時刻と終了時刻を入力し，それらの日時の差を考慮し，経過時間を出力している．
+また，実際の経過時間とプログラムの出力内容が等しいため，このプログラムは正常に動作している．
+
+従って，実験の要件及びプログラムのアイデア通りの出力が行えているため，この実験は成功である．
+
+
+\subsection{基本構文とファイル操作の習得(6.10.4)}
+\subsubsection{プログラミングのアイデア}
+% プログラミングのアイデアをまとめる
+課題3のプログラムは，先の課題で作成したtemperature.datファイルを読み込み，その内容を気温でソートし，標準出力に出力する．
+特に，ファイルの指定とソートの順序(昇順と降順)を標準入力から指定したい．
+そのため，input()関数を用いる．
+
+
+\subsubsection{作成したプログラム}
+% 作成したプログラムをまとめる
+
+作成したk023.pyは次の通りである．
+
+\begin{figure}[H]
+\begin{lstlisting}[caption={k023.py}]
+import os
+
+path:str = os.path.basename(input("Data File：　"))
+isDasc:bool = True if input("Rule（昇順:0, 降順:1）：　") == "1" else False
+
+basename:str = "ExpData/"
+record_column:list[str] = []
+records:list[str] = []
+
+with open(basename+path, "r", encoding='utf-8') as file:
+    tmp:list[str] = file.readlines()
+    
+
+record_column = tmp[0].split("\n")[0].split("\t")
+
+records = [tmp[i].split("\n")[0].split("\t") for i in range(1,len(tmp))]
+
+
+
+records.sort(key=lambda x:x[1], reverse=(isDasc))
+
+response_format = "{0:2d}:\t{1}\t{2}"
+
+for i in range(1, len(records)+1):
+    print(response_format.format(i, records[i-1][0], records[i-1][1]))
+\end{lstlisting}
+\end{figure}
+
+本プログラムでは，temperature.datをwith open句を使いオープンし，各行を配列に格納する．
+次に配列の各値に対して，各行末の改行コードをsplit()関数で取り除く．
+
+次に，ソートするために，一度ファイルの各行をすべて取得し，気温と日付を関連付けて配列に格納する．
+次に，格納された気温のデータを基準にしてsort()関数を適用し，破壊的にソートする．
+最後に，各値をタブで区切りなおして，指定されたソート順序で出力する．
+
+
+\subsubsection{結果}
+% 結果をまとめる
+実際に使用したtemperature.datファイルの内容を図\ref{fig:6-10-4-1-temperatures}に示す．
+
+\begin{figure}[H]
+\begin{center}
+\begin{screen}
+\begin{verbatim}
+年  月 日	気温[°C]
+2015/Aug/01	33.941
+2015/Aug/02	32.703
+2015/Aug/03	32.423
+2015/Aug/04	30.622
+2015/Aug/05	36.840
+2015/Aug/06	35.921
+2015/Aug/07	36.169
+2015/Aug/08	35.694
+2015/Aug/09	32.001
+2015/Aug/10	35.471
+2015/Aug/11	31.057
+2015/Aug/12	34.543
+2015/Aug/13	34.370
+2015/Aug/14	35.179
+2015/Aug/15	39.418
+2015/Aug/16	36.816
+2015/Aug/17	31.615
+2015/Aug/18	30.807
+2015/Aug/19	36.506
+2015/Aug/20	31.888
+      ・
+      ・
+      ・
+\end{verbatim}
+\end{screen}
+\end{center} 
+\caption{使用したtemperature.dat}
+\label{fig:6-10-4-1-temperatures} 
+\end{figure}
+
+temperature.datは日付に対して昇順に気温が格納されているデータである．
+表示の関係上，30行あるところを20行で示している．
+
+次に，昇順と降順の両方での出力結果を図\ref{fig:6-10-4-2-result-asc}と図\ref{fig:6-10-4-3-result-desc}に示す．
+
+\begin{figure}[H]
+\begin{center}
+\begin{screen}
+\begin{verbatim}
+>python k023.py
+Data File：　temperature.dat
+Rule（昇順:0, 降順:1）：　0
+ 1:     2015/Aug/04     30.622
+ 2:     2015/Aug/18     30.807
+ 3:     2015/Aug/27     30.979
+ 4:     2015/Aug/11     31.057
+ 5:     2015/Aug/22     31.205
+ 6:     2015/Aug/30     31.279
+ 7:     2015/Aug/17     31.615
+ 8:     2015/Aug/20     31.888
+ 9:     2015/Aug/09     32.001
+10:     2015/Aug/03     32.423
+11:     2015/Aug/02     32.703
+12:     2015/Aug/21     33.896
+13:     2015/Aug/01     33.941
+14:     2015/Aug/13     34.370
+15:     2015/Aug/12     34.543
+16:     2015/Aug/14     35.179
+17:     2015/Aug/25     35.443
+18:     2015/Aug/10     35.471
+19:     2015/Aug/26     35.532
+20:     2015/Aug/08     35.694
+    ・
+    ・
+    ・
+\end{verbatim}
+\end{screen}
+\end{center} 
+\caption{k023.pyの実行結果(昇順)} 
+\label{fig:6-10-4-2-result-asc}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\begin{screen}
+\begin{verbatim}
+>python k023.py
+Data File：　temperature.dat
+Rule（昇順:0, 降順:1）：　1
+ 1:     2015/Aug/15     39.418
+ 2:     2015/Aug/29     39.308
+ 3:     2015/Aug/28     38.811
+ 4:     2015/Aug/23     36.926
+ 5:     2015/Aug/05     36.840
+ 6:     2015/Aug/16     36.816
+ 7:     2015/Aug/24     36.674
+ 8:     2015/Aug/19     36.506
+ 9:     2015/Aug/07     36.169
+10:     2015/Aug/06     35.921
+11:     2015/Aug/08     35.694
+12:     2015/Aug/26     35.532
+13:     2015/Aug/10     35.471
+14:     2015/Aug/25     35.443
+15:     2015/Aug/14     35.179
+16:     2015/Aug/12     34.543
+17:     2015/Aug/13     34.370
+18:     2015/Aug/01     33.941
+19:     2015/Aug/21     33.896
+20:     2015/Aug/02     32.703
+    ・
+    ・
+    ・
+\end{verbatim}
+\end{screen}
+\end{center} 
+\caption{k023.pyの実行結果(降順)} 
+\label{fig:6-10-4-3-result-desc}
+\end{figure}
+
+実行内容は30行あるが，表示の関係上20行で区切っている．
+
+このプログラムは，標準入力で，ファイルを指定し，昇順と降順を指定できている．
+このとき，昇順を指定した場合は，続く出力が気温によって昇順にソートされており，気温と日付の対応も正しい．
+また降順を指定した場合も同様である．
+以上より，実験での要求事項と，プログラミングのアイデア通りの動作をしているため，実験は成功である．
+
+% ここから
+
+\subsection{基本構文とコマンドライン引数の習得(6.10.5)}
+\subsubsection{プログラミングのアイデア}
+% プログラミングのアイデアをまとめる
+課題2では，複数のファイルを指定し，そのファイル内の文字の数，単語の数，行数をカウントして，それぞれのカウント結果をファイルに出力する．
+
+特に，入力されるファイルは英単語の羅列であることが分かっているため，行数のカウントはそのまま改行の数を数える．
+また，単語の数はスペースで区切った後の各行の要素の数，
+文字数は区切られた単語ごとにカウントし，各行の値を合計することで求める．
+
+またファイル指定にはコマンドライン引数を利用する．
+そのため，sys.argvというフィールドを利用する．
+
+
+\subsubsection{作成したプログラム}
+% 作成したプログラムをまとめる
+\begin{figure}[H]
+\begin{lstlisting}[caption={k032.py}]
+def main():
+  
+  import  sys, os
+  
+  cmd_args = sys.argv
+  
+  BASE_NAME = "ExpData"
+  
+  source_file_pathes = [os.path.join(BASE_NAME, arg) for arg in cmd_args[1:-1]]
+  
+  target_file_path = os.path.join(BASE_NAME, cmd_args[-1])
+  
+  file_detail = dict()
+  for source_file_path in source_file_pathes:
+
+      with open(source_file_path, "+r", encoding="utf-8") as file:
+          
+          if not source_file_path in file_detail.keys():
+              paragraphs = [f.encode("utf-8").decode("utf-8") for f in file.readlines()]
+              paragraphs = [p.replace(" \n", "").replace("\n", "").split(" ") for p in paragraphs]
+                              
+              tmp= dict()
+              
+              tmp["letters"] = sum([sum([len(l) for l in p]) for p in paragraphs])
+              
+              tmp["words"] = sum([len(p) for p in paragraphs])
+              
+              tmp["paragraphs"] = len(paragraphs)
+              
+              file_detail[source_file_path] = tmp
+  
+  with open(target_file_path, "w", encoding="UTF-8") as file:
+          
+      for source_file_path in file_detail.keys():
+
+          file.write(f"{os.path.basename(source_file_path)}: {file_detail[source_file_path]['letters']} 文字, {file_detail[source_file_path]['words']} 語, {file_detail[source_file_path]['paragraphs']} 行 \n") 
+                      
+    
+if(__name__ == "__main__"):
+    main()
+\end{lstlisting}
+\end{figure}
+
+まず，コマンドライン引数から入力されるファイルのファイルパスと，出力されるファイルのファイルパスを受け取っている．
+このとき，sys.argvというフィールドを利用する．
+この時，コマンドライン引数の0番目は必ずpythonという文字列であるため，ここを飛ばすために1番目から取得する．
+またコマンドライン引数の仕様上，引数の末尾のデータは出力されるファイルのパスであるため，1番からn-2番目(nは引数の数)までを，入力ファイルパスとし，n-1番目を出力ファイルパスとしている．
+
+次に，各ファイルのデータをwith open句で取得している．
+各行の取得や，行末の処理はこれまでのk023.pyなどと同様である．
+
+次に，文字数，単語数，行数の順番でカウントを行う．
+まず，ファイルを読み込んだのちに，そのファイルを一行ずつ取り出し，配列にまとめている．
+次に，一行をさらにスペースで区切り，配列をネストする形で保存する．
+次に，ネストされた配列から各単語を取り出し，その単語の文字数を計測し，文字数とする．
+次に，ネストされた配列内に何個の単語があるかを測定し，単語とする．
+次に，ネストされた配列が何個あるかを測定し，行数とする．
+以上の処理によって求められた値を辞書型に保存する．
+構造としては，ファイル名をキーにして，値を登録．
+登録される値としては，文字数，単語数，行数をキーとして，各値を保存した辞書型の値である．
+最後に，出力ファイルに対して，指定されたフォーマットで記録したデータを保存している．
+
+
+\subsubsection{結果}
+% 結果をまとめる
+
+実際に，それぞれ複数ファイルと一つのファイルを指定し，文字数と単語数，行数をカウントした結果が，図\ref{fig:6-10-5-1-result}と図\ref{fig:6-10-5-2-result}である．
+
+\begin{figure}[H]
+\begin{center}
+\begin{screen}
+\begin{verbatim}
+>python k032.py overlap.dat unique.dat wc.txt
+>
+\end{verbatim}
+\end{screen}
+\end{center} 
+\caption{k032.pyの実行結果(入力ファイル2つ)} 
+\end{figure}
+% ここから
+
+\begin{figure}[H]
+\begin{center}
+\begin{screen}
+\begin{verbatim}
+overlap.dat: 1420768 文字, 220237 語, 99999 行 
+unique.dat: 22791 文字, 3531 語, 1110 行 
+\end{verbatim}
+\end{screen}
+\end{center} 
+\caption{出力されるwc.txtの内容(入力ファイル2つ)} 
+\label{fig:6-10-5-1-result}
+\end{figure}
+
+実際に，overlap.datとunique.datのファイルを指定し，それぞれのファイルの文字数，単語数，行数をカウントし，wc.txtに出力している．
+以上の内容から，元ファイルが２つ以上の場合に正常に動作することが分かった．
+
+\begin{figure}[H]
+\begin{center}
+\begin{screen}
+\begin{verbatim}
+>python k032.py overlap.dat wc.txt
+>
+\end{verbatim}
+\end{screen}
+\end{center} 
+\caption{k032.pyの実行結果(入力ファイル1つ)} 
+\end{figure}
+% ここから
+
+\begin{figure}[H]
+\begin{center}
+\begin{screen}
+\begin{verbatim}
+overlap.dat: 1420768 文字, 220237 語, 99999 行
+\end{verbatim}
+\end{screen}
+\end{center} 
+\caption{出力されるwc.txtの内容(入力ファイル1つ)} 
+\label{fig:6-10-5-2-result}
+\end{figure}
+
+実際に，overlap.datのファイルを指定し，そのファイルの文字数，単語数，行数をカウントし，wc.txtに出力している．
+以上の内容から，元ファイルが１つの場合に正常に動作することが分かった．
+
+従って，任意の数のファイル数が指定されてもすべてwc.txtにファイルを出力できるといえる．
+また，図\ref{fig:6-10-5-1-result}と図\ref{fig:6-10-5-2-result}の出力結果は，実際のファイルの文字数，単語数，行数と一致しており，同一ファイルに対して同一の出力を行っているため，このプログラムは正常に動作しているといえる．
+
+以上より，実験での要求事項と，プログラミングのアイデア通りの動作をしているため，実験は成功である．
+
+
+\subsection{総合課題(6.10.6)}
+\subsubsection{プログラミングのアイデア}
+% プログラミングのアイデアをまとめる
+課題１で作成するプログラムでは，アクセスログを読み取り，要求された項目を抽出する．
+ファイル名は，k061.pyである．
+
+求められている抽出事項は次の３つである．
+
+\begin{itemize}
+  \item 総アクセス数
+  \item リモートアドレスの数(重複を除く)
+  \item SQLコマンドインジェクションの疑いがあるIPアドレス
+\end{itemize}
+
+まず，総アクセス数は，ファイルの行数を数えることで求められる．
+これは，Apacheのログファイルでは，各行が一つのアクセスに対応するためである．
+\begin{figure}[H]
+\begin{lstlisting}[caption={Apacheのログファイルの例}]
+10.4.0.5 - - [22/Nov/2024:11:03:22 +0900] "GET /login.php?id=osaka&pass=1qaz%21QAZ HTTP/1.1" 200 403 "http://10.4.0.2/" "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/115.0"
+\end{lstlisting}
+\end{figure}
+
+Apacheのログファイルは各値がスペースで区切られている．
+そのため，スペースを区切り文字にすれば，各値をグループごとに取得できる．
+またリクエストはすべてダブルクオーテーションで囲われている．
+そのため，ダブルクオーテーションを区切り文字にすれば，リクエストの部分だけを取得できる．
+
+次に，リモートアドレスの数を重複無しで測定する方法についてである．
+これは，各行のリモートアドレスをそれぞれ配列に格納することで実現する．
+このとき，リモートアドレスの重複を除くために，list型を一度set型に変換してから，再度list型に変換する．
+そして，変換されたリストの要素数を数え，リモートアドレスの数を求める．
+
+最後に，SQLコマンドインジェクションの疑いがあるアクセスを抽出する方法について考える．
+これには，正規表現を用いて実質的になホワイトリスト方式を採用する．
+今回，SQLコマンドインジェクションの対象となっているのはURLのクエリ部分の文字列である．
+従って，この文字列のルールを正規表現で厳格に表現し，それに反する入力であればすべてSQLコマンドインジェクションを行っていると判断する．
+
+前回の実験では，ログインフォームに対するSQLコマンドインジェクションのみを行った．
+そのため，その際のクエリのみに注目して検査する．
+特に，ログインフォームの入力規則は次のとおりである．
+
+\begin{quote}
+  ユーザ名：半角英数字とエクスクラメンションマーク(!)のみ 
+
+  パスワード：半角英数字とエクスクラメンションマーク(!)のみ
+\end{quote}
+
+この規則に基づいて，正規表現を用いて正常な通信以外を抽出する．
+
+課題2で作成するプログラムでは，アクセスログを読み取り，
+リモートアドレスごとのアクセス回数をまとめ，それらをXLSXファイルに出力し，
+Excel上に棒グラフを描画する．
+ファイル名は，k062.pyである．
+
+特に，アクセス回数を調べるアイデアに関しては，課題1のプログラムを改良したものを用いる．
+具体的には，連想配列のカギをリモートアドレス，値をアクセス回数として，その値を更新していく．
+
+次に，XLSXファイルに出力するためには，openpyxlというライブラリ\cite{bib:openpyxl}を用いる．
+このライブラリを用いることで，Excelファイルを操作することができる．
+特に今回は，openpyxl.chart.BarChartクラスを用いて，棒グラフを描画する．
+
+以上によって出力されるエクセルファイルは，graph.xlsxである．
+
+
+\subsubsection{作成したプログラム}
+% 作成したプログラムをまとめる
+
+作成したk061.pyは次の通りである．
+
+\begin{figure}[H]
+\begin{lstlisting}[caption={k061.py}]
+def main():
+  BASE_NAME = "ExpData"
+  
+  import sys, os, re, urllib.parse
+  
+  args = sys.argv
+  
+  http_method_pattern = re.compile(r'^(POST|GET)$')
+  id_pass_pattern = re.compile(r'id=.+&pass=.+$')
+  query_pattern = re.compile(r'id=[0-9a-zA-Z!]+&pass=[0-9a-zA-Z!]+$')
+      
+  source_file_path = os.path.join(BASE_NAME, args[1])
+  
+  access_log = list()
+  with open(source_file_path, "r+", encoding="utf-8") as file:
+      access_log = file.readlines()
+  
+  uniq_ip_addrs = list()
+  sum_ip_addrs = len(access_log)
+  danger_ip_addrs = list()
+  for al in access_log:
+      ip_addr = al.split(r' ')[0]
+      request = al.split(r'"')[1]
+
+      uniq_ip_addrs.append(ip_addr)
+      
+      if request != "-":
+          http_method, body, method = request.split(r' ')
+          if re.match(http_method_pattern, http_method):
+              query = urllib.parse.unquote(body.split("?")[-1])
+
+              if re.match(id_pass_pattern, query) and not re.match(query_pattern, query):
+                  danger_ip_addrs.append(ip_addr)
+
+  def sort_key(ip_addr):
+      total: bin = 0b0
+      for idx, obj in enumerate(ip_addr.split(".")):
+          total += int(obj) << (8*(3-idx))
+      
+      return total
+  
+  uniq_ip_addrs = list(set(uniq_ip_addrs))
+  uniq_ip_addrs.sort(key=sort_key)
+  
+  danger_ip_addrs = list(set(danger_ip_addrs))
+  danger_ip_addrs.sort(key=sort_key)
+  
+  print(f"アクセス数：{sum_ip_addrs}\nアクセス元IPアドレス数：{len(uniq_ip_addrs)}\n攻撃元のIPアドレス：({', '.join(danger_ip_addrs)})")
+      
+if(__name__ in "__main__"):
+  main()
+\end{lstlisting}
+\end{figure}
+
+このプログラムの実行の流れは以下の示すとおりである．
+
+\begin{enumerate}
+  \item まず，コマンドライン引数を受け取り，その引数を元にファイルを開く．
+  \item ファイルを一行ずつ読み取り，その内容をリストに格納し，ファイルを閉じる．
+  \item 値をひとつづつ取り出し，それぞれ別の区切り文字を使ってリクエスト部分とidアドレス部分を取り出す．
+  \item ipアドレスをリストに格納する．
+  \item リクエストが-でない場合，リクエストをさらに区切り文字で分割し，リクエストのメソッド，ボディ，メソッドを取り出す．
+  \item クエリ本体をurlib.parse.unquote()関数でデコードし，一般的に表示される形式に直す．
+  \item その状態の文字列から，ログインフォームのクエリ形式に当てはまるものを取り出し，かつ，ログインフォームの入力形式に当てはまらないものを取り出す．
+  \item それによって抽出された際の行に対応するipアドレスをリストに格納する．
+  \item 次に，ipアドレスのリストを重複を除いて，ソートする．
+  ソートする際には，ipアドレス順に表示するため，一度ipアドレスの文字列を二進数に変換しその値をもとにソートしている．
+  \item 最後に，求められた値を指定されたフォーマットに合わせて出力している．
+\end{enumerate}
+
+次に，作成したk062.pyは次の通りである．
+
+\begin{figure}[H]
+\begin{lstlisting}[caption={k062.py}]
+def main():
+    
+  import sys, os, re, urllib
+  import openpyxl, openpyxl.chart
+  
+  args = sys.argv
+  BASE_NAME = "ExpData"
+  
+  source_file_path = os.path.join(BASE_NAME, args[1])
+  target_file_path_csv = os.path.join(BASE_NAME, args[2])
+  target_file_path_xlsx = os.path.join(BASE_NAME, "graph.xlsx")
+  
+  access_log = list()
+  with open(source_file_path, "r+", encoding="utf-8") as file:
+      access_log = file.readlines()
+  
+  uniq_ip_addrs = dict()
+  for al in access_log:
+      al = re.split(' ', al)  
+      
+      if not al[0] in uniq_ip_addrs.keys():
+          uniq_ip_addrs[al[0]] = 1
+      else:
+          uniq_ip_addrs[al[0]] += 1
+  
+  uniq_ip_addrs_list = sorted([[k,uniq_ip_addrs[k]]for k in uniq_ip_addrs.keys()], key=lambda x:x[1], reverse=True)
+  
+  with open(target_file_path_csv, "w") as file:
+      for ip_addr in uniq_ip_addrs_list:
+          file.write(f"{ip_addr[0]}, {ip_addr[1]}\n")      
+  
+  WB = openpyxl.Workbook()
+  ws = WB["Sheet"]
+  ws.title = "ip_addr_num"
+  
+  data = [["ip", "num"]] + uniq_ip_addrs_list
+  
+  chart_anchor = ""
+  for row_i, row in enumerate(data):
+      for col_i, col in enumerate(row):
+          col_letter = chr(ord("A")+col_i)
+          address = f"{col_letter}{row_i+1}"
+          ws[address] = col
+          chart_anchor = f"{col_letter}{row_i+2}"
+  
+  category = openpyxl.chart.Reference(ws, 1, 2, 1, len(data))
+  data = openpyxl.chart.Reference(ws, 2, 2, 2, len(data))
+  
+  chart = openpyxl.chart.BarChart()
+  chart.add_data(data)
+  chart.set_categories(category)
+  chart.anchor = chart_anchor
+  chart.legend = None
+  
+  ws.add_chart(chart)
+  
+  WB.save(target_file_path_xlsx)
+    
+if(__name__ in "__main__"):
+    main()
+\end{lstlisting}
+\end{figure}
+
+ファイル取得から，ファイルオープン，ipアドレスの取得までは課題1と同様である．
+
+\begin{enumerate}
+  \item ファイルのアクセス回数の
+  \item ipアドレスごとのアクセス回数をまとめるために，連想配列の値を更新する．
+  ただし，更新時に一度も登録されていないipアドレスの場合は初期値を1として，新たに登録する．
+  \item 連想配列をリストに変換し，アクセス回数の多い順にソートする．
+  \item リストの内容をCSVファイルに出力する．
+  \item openpyxlのWorkbook()クラスを用いて，Excelファイルに相当するインスタンスを生成する．
+  \item タイトルとデータを設定する．
+  \item データの格納域をA0から始めるようにし，繰り返し処理でデータを格納する．
+  \item openpyxl.chart.Reference()クラスを用いて，グラフのデータの参照範囲を指定する．
+  \item openpyxl.chart.BarChart()クラスを用いて，棒グラフのインスタンスを生成する．
+  \item 棒グラフのインスタンスに対して参照範囲やグラフの位置を指定する．
+  \item グラフをExcelファイルに追加し，openpyxl.WorkBook().save()メソッドを用いてファイルを保存する．
+\end{enumerate}
+
+\subsubsection{結果}
+% 結果をまとめる
+k061.pyとk062.pyの実行結果は次の通りである．
+
+\begin{figure}[H]
+\begin{center}
+\begin{screen}
+\begin{verbatim}
+>python k061.py access.log
+アクセス数：210
+アクセス元IPアドレス数：7
+攻撃元のIPアドレス：(10.4.0.1, 10.4.0.5, 10.4.0.8, 10.4.0.9, 10.4.0.10)
+>
+\end{verbatim}
+\end{screen}
+\end{center} 
+\caption{k061.pyの実行結果} 
+\end{figure}
+
+実際に，access.logファイルを指定し，そのファイルのアクセス数，アクセス元IPアドレス数，攻撃元のIPアドレスを抽出している．
+以上の内容から，元ファイルが正常に処理されていることが分かった．
+
+またこれらの動作は，プログラミングのアイデアに記したとおりであるうえ，実験指導書の定義通りの動作をしているため，この実験は成功である．
+
+% 結果をまとめる
+\begin{figure}[H]
+\begin{center}
+\begin{screen}
+\begin{verbatim}
+>python k062.py access.log ip.csv
+>
+\end{verbatim}
+\end{screen}
+\end{center} 
+\caption{k062.pyの実行結果} 
+\end{figure}
+% ここから
+
+% 結果をまとめる
+\begin{figure}[H]
+\begin{center}
+\begin{screen}
+\begin{verbatim}
+10.4.0.9, 69
+10.4.0.5, 50
+10.4.0.10, 34
+10.4.0.1, 27
+10.4.0.8, 21
+10.4.0.16, 7
+10.4.1.5, 2
+\end{verbatim}
+\end{screen}
+\end{center} 
+\caption{ip.csvの内容} 
+\end{figure}
+
+これは，ip.csvの内容をそのまま記載したものである．
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=.8\textwidth]{graphs/ip-addrs-bar-chart.png}
+    \caption{k062.pyが生成したアクセス回数ごとの棒グラフ(Excel)}
+    \label{fig:ip-addrs-bar-chart}
+  \end{center}  
+\end{figure}
+
+この図\ref{fig:ip-addrs-bar-chart}は，k062.pyをaccess.logに対して実行した際の実行結果である．
+
+実際に，access.logファイルを指定し，そのファイルのアクセス回数ごとのIPアドレスを抽出し，ip.csvに出力している．
+またその内容を元に，グラフを生成している．
+
+以上の内容から，元ファイルが正常に処理されていることが分かった．
+
+またこれらの動作は，プログラミングのアイデアに記したとおりであるうえ，実験指導書の定義通りの動作をしているため，この実験は成功である．
+
+
+\subsection{発展課題(6.10.7)}
+\subsubsection{プログラミングのアイデア}
+% プログラミングのアイデアをまとめる
+発展課題では，6.10.6の課題2で作成したグラフを，matplotlibを用いて描画する．
+
+アイデアとしては，openpyxlで行っていたことを，そのままmatplotlib\cite{bib:matplotlib-bar-chart}で行う．
+
+また，表示されるグラフには，x軸にアクセス回数，y軸にアクセス元IPアドレスを表示する．
+次に，各棒グラフに対して，アクセス回数を表示する．
+以上の要件を追加して，プログラムを作成する．
+
+\subsubsection{作成したプログラム}
+% 作成したプログラムをまとめる
+\begin{lstlisting}[caption={k071.py}]
+def main():
+  BASE_NAME = "ExpData"
+  
+  import sys, os, re, numpy as np, matplotlib.pyplot as plt
+  
+  args = sys.argv
+  
+  BASE_NAME = "ExpData"
+  
+  source_file_path = os.path.join(BASE_NAME, args[1])
+  
+  access_log = list()
+  with open(source_file_path, "r+", encoding="utf-8") as file:
+      access_log = file.readlines()
+  
+  uniq_ip_addrs = dict()
+  for al in access_log:
+      al = re.split(' ', al)  
+      
+      if not al[0] in uniq_ip_addrs.keys():
+          uniq_ip_addrs[al[0]] = 1
+      else:
+          uniq_ip_addrs[al[0]] += 1
+  
+  uniq_ip_addrs_list = sorted([[k,uniq_ip_addrs[k]]for k in uniq_ip_addrs.keys()], key=lambda x:x[1], reverse=True)
+  
+  labels = [i[0] for i in uniq_ip_addrs_list]
+  means = [i[1] for i in uniq_ip_addrs_list]
+  
+  x = np.arange(len(labels))
+  width = 0.4
+
+  fig, ax = plt.subplots()
+  
+  ax.set_xlabel('IPアドレス', fontname = 'MS Mincho')
+  ax.set_ylabel('アクセス回数', fontname = 'MS Mincho')
+  ax.set_title(f'{source_file_path}のIPアドレスごとのアクセス回数(降順)', fontname = 'MS Mincho')
+
+  rect = ax.bar(x, means, width)
+  ax.set_xticks(x)
+  ax.set_xticklabels(labels)
+
+  def autolabel(rects):
+      for rect in rects:
+          height = rect.get_height()
+          ax.annotate('{}'.format(height),
+                  xy=(rect.get_x() + rect.get_width() / 2, height),
+                  xytext=(rect.get_x() + rect.get_width() / 2, height),
+                  textcoords="data",
+                  ha='center', va='bottom')
+  autolabel(rect)   
+  
+  plt.savefig('ExpData/graph.png', format='png', dpi=100)
+      
+if(__name__ in "__main__"):
+  main()
+\end{lstlisting}
+
+まず，ファイル読み込みから，アクセス回数のカウントまでは，6.10.6の課題2と同様である．
+
+\begin{enumerate}
+  \item アクセス回数の多い順にソートされたリストから，ラベルと各アクセス回数を分けて取り出す．
+  \item pyplot.subplots()関数を用いて，FigureクラスのインスタンスとAxesクラスのインスタンスを生成する．
+  \item Axesクラスのインスタンスに対してタイトルとx,y軸のラベルを設定する．
+  \item Axesクラスのインスタンスに対して，棒グラフを描画する．
+  ただし，各棒グラフのラベルはAxesクラスのset\_xticks, set\_xticklabelsメソッドを用いて設定する．
+  \item 各棒グラフに対して，アクセス回数を表示する．
+  このとき，テキスト各棒の上に数値を表示するというメソッドはないため，自作のautolabel()関数を用いて，数値を表示する．
+  autolabel()関数では，棒グラフの座標情報を用いて，Axesクラスのインスタンスに対して，棒の上に文字を表示している．
+  \item plt.savefig()関数を用いて，グラフを画像として保存する．
+\end{enumerate}
+
+
+
+\subsubsection{結果}
+% 結果をまとめる
+\begin{figure}[H]
+\begin{center}
+\begin{screen}
+\begin{verbatim}
+>python k071.py access.log
+\end{verbatim}
+\end{screen}
+\end{center} 
+\caption{k071.pyの実行結果} 
+\end{figure}
+% ここから
+
+\begin{figure}[H]
+  \begin{center}
+    \includegraphics[width=.8\textwidth]{graphs/graph.png}
+    \caption{k071.pyが生成したアクセス回数ごとの棒グラフ}
+    \label{fig:graph}
+  \end{center}  
+\end{figure}
+
+この図\ref{fig:graph}は，k071.pyをaccess.logに対して実行した際の実行結果である．
+
+実際に，access.logファイルを指定し，そのファイルのアクセス回数ごとのIPアドレスを抽出し，graph.pngに出力している．
+以上の内容から，元ファイルが正常に処理されていることが分かった．
+
+またこれらの動作は，プログラミングのアイデアに記したとおりであるうえ，実験指導書の定義通りの動作をしているため，この実験は成功である．
+
+\section{感想}
+% 感想をまとめる
+今回の実験を通して，Pythonのプログラムにおける基本構文やファイル操作，標準入力などの基本的な操作を実際にコードを書くことを通して学ぶことができた．
+
+特に，アクセスログの解析においては，正規表現を用いることができ，文字列解析における非常に強力なツールであることを認識した．
+
+\begin{thebibliography}{99}
+\bibitem{bib:matplotlib-bar-chart}
+  Helve Tech Blog,
+  \@Helve64,
+  Matplotlibで棒グラフを描画する方法,
+  \url{https://pygraph.helve-blog.com/matplotlib/bar-plot}
+  更新日不明,
+  2025/01/31
+\bibitem{bib:openpyxl}
+  Qiita,
+  \@mathlive,
+  Excel作成/編集を自動化！python openpyxlのまとめ,
+  \url{https://qiita.com/mathlive/items/20078f4b31273c180f51}
+  2024/12/07,
+  2025/02/08
+\end{thebibliography}
+
+\end{document}

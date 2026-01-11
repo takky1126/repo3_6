@@ -16,6 +16,7 @@
 \usepackage{titlesec}
 \usepackage{subcaption}
 \usepackage{listings}
+\usepackage{ascmac}
 
 % ========== listings の設定 ==========
 \lstset{
@@ -141,7 +142,7 @@
   \begin{huge}
     アブストラクト\\\\
   \end{huge}
-  本実験では，Python(パイソン)と呼ばれるスクリプト言語の文法や基本的な構造について
+  　本実験では，Python(パイソン)と呼ばれるスクリプト言語の文法や基本的な構造について
   学習し，Pythonを用いて様々なデータ整理や加工，テキストファイル処理及びツールの基本
   的な作成方法について習得すること，他のプログラミング言語と比較してPythonの特徴や
   利点についても学ぶことを目的とする．具体的にはPythonの基本文法を学ぶため，演算プ
@@ -164,26 +165,238 @@
   \noindent
   % \setcounter{page}{1}
   \section{実験目的}
-  本実験では，Python(パイソン)と呼ばれるスクリプト言語の文法や基本的な構造について
+  　本実験では，Python(パイソン)と呼ばれるスクリプト言語の文法や基本的な構造について
   学習し，Pythonを用いて様々なデータ整理や加工，テキストファイル処理及びツールの基本
   的な作成方法について習得することを目的とする．また，他のプログラミング言語と比較し
   てPython の特徴や利点についても学ぶ．
   
   \newpage
   \section{実験結果}
-  
-  \newpage
-  \section{検討課題}
+  　指導書に示されたプログラミング課題をそれぞれアイデア，プログラム，結果に分けて
+  述べていく．
 
-  \newpage
-  \noindent
-  \begin{huge}
-    まとめ・感想\\\\
-  \end{huge}
+  \subsection{スクリプトプログラミングの学習}
+  \subsubsection{アイデア}
+  Pythonを用いて簡単な演算を行う．演算子と役割は以下の表\ref{pythonでの四則演算子}
+  に示すとおりである．
+  
+  \begin{table}[H]
+    \centering
+    \caption{pythonでの四則演算子}
+    \label{pythonでの四則演算子}
+    \begin{tabular}{|c|l|}
+    \hline
+    +  & 加算 \\ \hline
+    -  & 減算 \\ \hline
+    * & 乗算 \\ \hline
+    /  & 除算 \\ \hline
+    \% & 剰余 \\ \hline
+    // & 除算（切り捨て） \\ \hline
+  \end{tabular}
+  \end{table}
+
+  これらの演算子を用いて指導書に示されたサンプルプログラムを実行する．
+
+  \subsubsection{プログラム}
+  以下に指導書のサンプルプログラムを示す．
+
+  \begin{figure}[H]
+  \begin{lstlisting}[title={サンプルプログラム}]
+  print("10 + 3 =", 10+3)
+  print("10 - 3 =", 10-3)
+  print("10 * 3 =", 10*3)
+  print("10 / 3 =", 10/3)
+  print("10 % 3 =", 10%3)
+  print("10 // 3 =", 10//3)
+  \end{lstlisting}
+  \end{figure}
+
+  サンプルプログラムでは1行目から順に10と3の加算，減算，乗算，除算，剰余，切り捨て除算
+  を行っている．
+
+  \subsubsection{結果}
+  サンプルプログラムを実行した結果を図\ref{サンプルプログラムの実行結果}に示す．
+
+  \begin{figure}[H]
+    \begin{center}
+    \begin{screen}
+    \begin{verbatim}
+    >python four_arithmetic.py
+    10 + 3 = 13
+    10 - 3 = 7
+    10 * 3 = 30
+    10 / 3 = 3.3333333333333335
+    10 % 3 = 1
+    10 // 3 = 3
+    \end{verbatim}
+    \end{screen}
+    \end{center} 
+    \caption{サンプルプログラムの実行結果} 
+    \label{サンプルプログラムの実行結果}
+  \end{figure}
+
+  図\ref{サンプルプログラムの実行結果}より，表\ref{pythonでの四則演算子}
+  で示した通りに動作していることがわかる．よって指導書に示されたサンプルプログラムは
+  正しく動作したと言える．
+
+  \subsection{九九表の出力}
+  ここでは図\ref{出力したい九九の表}のような九九表を出力するプログラムを作成する．
+
+  \begin{figure}[H]
+    \begin{center}
+    \begin{screen}
+    \begin{verbatim}
+       |  1  2  3  4  5  6  7  8  9
+    ---+---------------------------
+      1|  1  2  3  4  5  6  7  8  9
+      2|  2  4  6  8 10 12 14 16 18
+      3|  3  6  9 12 15 18 21 24 27
+      4|  4  8 12 16 20 24 28 32 36
+      5|  5 10 15 20 25 30 35 40 45
+      6|  6 12 18 24 30 36 42 48 54
+      7|  7 14 21 28 35 42 49 56 63
+      8|  8 16 24 32 40 48 56 64 72
+      9|  9 18 27 36 45 54 63 72 81
+    \end{verbatim}
+    \end{screen}
+    \end{center} 
+    \caption{出力したい九九の表} 
+    \label{出力したい九九の表}
+  \end{figure}
+
+  \subsubsection{アイデア}
+  図\ref{出力したい九九の表}の最初の2行はそれぞれ掛ける数と区切りの横線を出力
+  しているだけである．3行目以降は掛ける数と同じような形で九九表が出力されているため，
+  指導書の指定の通りにフォーマットを使うとコンパクトなコーディングができる．
+  また，各数値は1桁のものでも2桁のものでも2桁相当の空間を取って出力するため，これも
+  フォーマットを活用できる．
+
+  \subsubsection{プログラム}
+  アイデアに則って組んだ九九表を出力するプログラムを以下に示す．
+
+  \begin{figure}[H]
+  \begin{lstlisting}[title={九九表を出力するプログラム}]
+    # フォーマット
+    f = " {0} |"
+    n = " {0:2}"
+
+    # 1行目
+    print(f.format(" "),end='')
+    for i in range(1,10):
+        st = " " + (str)(i)
+        print(n.format(st),end='')
+
+    # 2行目
+    print("\n"+"---+----------------------------")
+
+    # 3行目以降
+    for i in range(1,10):
+        print(f.format(i),end='')
+        for j in range(1,10):
+            print(n.format(i*j),end='')
+        print()
+  \end{lstlisting}
+  \end{figure}
+
+  コメントにある通り，2～3行目がフォーマット，6～9行目が出力の1行目，
+  12行目が出力の2行目，15～19行目が出力の3行目以降を処理している．
+
+  \subsubsection{結果}
+  図\ref{k001.pyの実行結果}に実行結果を示す．図\ref{k001.pyの実行結果}の九九表
+  が図\ref{出力したい九九の表}と一致していることから，プログラムは正しく動作したと言える．
+  
+  \begin{figure}[H]
+    \begin{center}
+    \begin{screen}
+    \begin{verbatim}
+    >python k001.py
+       |  1  2  3  4  5  6  7  8  9
+    ---+---------------------------
+      1|  1  2  3  4  5  6  7  8  9
+      2|  2  4  6  8 10 12 14 16 18
+      3|  3  6  9 12 15 18 21 24 27
+      4|  4  8 12 16 20 24 28 32 36
+      5|  5 10 15 20 25 30 35 40 45
+      6|  6 12 18 24 30 36 42 48 54
+      7|  7 14 21 28 35 42 49 56 63
+      8|  8 16 24 32 40 48 56 64 72
+      9|  9 18 27 36 45 54 63 72 81
+    \end{verbatim}
+    \end{screen}
+    \end{center} 
+    \caption{k001.pyの実行結果}
+    \label{k001.pyの実行結果}
+  \end{figure}
+
+  \subsection{閏年判定}
+  ここでは入力された年が閏年かどうかを判定するプログラムを作成する．
+
+  \subsubsection{アイデア[1]}
+  Pythonにはcalenderモジュールというものがあり，これを用いることで
+  1行のコードで与えられた数値型の年が閏年かどうかを判定できる．このモジュールを
+  用いて本課題を解決する．
+
+  \subsubsection{コード}
+  前述のcalenderモジュールを用いて作成したコードを以下に示す．
+
+  \begin{figure}[H]
+  \begin{lstlisting}[title={閏年判定プログラム}]
+    import calendar
+
+    year = input("何年（YYYY）：")
+    year_i = int(year)
+
+    if calendar.isleap(year_i):
+        print(year_i , "年は閏年です。")
+    else:
+        print(year_i , "年は平年です。")
+  \end{lstlisting}
+  \end{figure}
+
+  コードの1行目ではcalenderモジュールをインポートしており，3行目で年数の入力処理，
+  4行目で入力の数値型変換，6行目以降でcalenderモジュールを用いた閏年判定と出力
+  を行っている．
+
+  \subsubsection{結果}
+  以下の図\ref{k011.pyの実行結果}にプログラムで示したコードを実行した結果を示す．
+  平年と閏年をそれぞれ入力し，正しい結果が出力されるか試した．
+
+  \begin{figure}[H]
+    \begin{center}
+    \begin{screen}
+    \begin{verbatim}
+    > python test.py
+    何年（YYYY）：2025
+    2025 年は平年です。
+    > python test.py
+    何年（YYYY）：2020
+    2020 年は閏年です。
+    \end{verbatim}
+    \end{screen}
+    \end{center} 
+    \caption{k011.pyの実行結果}
+    \label{k011.pyの実行結果}
+  \end{figure}
+
+  図\ref{k011.pyの実行結果}の出力結果から，閏年を閏年，平年を平年と出力できたことが
+  わかる．このことから本実験のプログラムは正しく動作したと言える．
+
+  \subsection{ファイル操作}
+  本実験ではtemperature.datファイルを読み込み，昇順か降順かしいていされた順にソート
+  するプログラムを作成する．
+
+  \subsubsection{アイデア}
+
 
   \newpage
   \begin{huge}
     参考文献\\\\
   \end{huge}
-  % \noindent[]ページ名，\url{}，2025年12/25参照．\\
+  % \noindent[]ページ名，\url{}，2026年01/11参照．\\
+  \noindent[1]Pythonでうるう年を判定・カウント・列挙，\url{https://note.nkmk.me/python-calendar-leap-year/}，2026年01/11参照．\\
+  
+  \newpage
+  \begin{huge}
+    感想\\\\
+  \end{huge}
 \end{document}
