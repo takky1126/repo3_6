@@ -204,5 +204,11 @@ INPUT c:/texlive/2025/texmf-dist/fonts/tfm/public/cm/cmmi10.tfm
 INPUT c:/texlive/2025/texmf-dist/fonts/tfm/public/cm/cmsy10.tfm
 INPUT c:/texlive/2025/texmf-dist/fonts/tfm/public/cm/cmex10.tfm
 INPUT c:/texlive/2025/texmf-dist/fonts/tfm/public/cm/cmr10.tfm
+INPUT ./datas/ip.csv.png
+INPUT ./datas/ip.csv.png
+INPUT ./datas/matplotlib.png
+INPUT ./datas/matplotlib.png
 INPUT ./19_瀧口大地_exp6.aux
+INPUT c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb
+INPUT c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb
 INPUT c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/latxfont/lcircle1.pfb

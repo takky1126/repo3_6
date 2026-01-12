@@ -155,7 +155,7 @@
   ラムを作成する．具体的な方法として，重複データを削除するプログラムでは重複している
   かどうかの判定をsetを用いて行った．また，アクセスログから正規表現を用いてSQLコマ
   ンドインジェクションを検出するプログラムでは，SQLコマンドインジェクションで見られ
-  る特徴的な文字列を正規表現で検出することで，検出を行った．また，各IPアドレスのア
+  る特徴的な文字列を正規表現で検出することで，検出を試みた．また，各IPアドレスのア
   クセス回数を棒グラフとして出力するプログラムでは，辞書を用いて各IPアドレスのアク
   セス回数をカウントしopenpyxlを用いてエクセルファイルに棒グラフを出力した．同様に
   matplotlib を用いて各 IP アドレスごとのアクセス数を棒グラフとして出力した．作成した
@@ -784,9 +784,272 @@
 
   以上のことから本実験課題のプログラムは想定・指定通りに動作したと言える．
 
-  \subsection{総合課題(6.10.6)}
+  \subsection{アクセスログからの情報抽出(6.10.6.1)}
+  　本実験課題では第5章実験で行った，Webサーバのアクセスログからアクセス数とアクセス元
+  のIPアドレス数を調べる課題をPythonで行う．
 
-  %更新行
+  \subsubsection{アイデア[2]}
+  IPアドレスの抽出やSQLインジェクションの検出は指導書の指定の通りreモジュールを使って
+  解決する．指導書のURLが壊れていたためプログラム作成時に都度調べて書く．
+  本課題で今までと違うのはreモジュールともう1つ，アクセス元のIPアドレス数という
+  単純な数ではなく種類数を調べるところである．指導書にて軽く触れられているが，
+  Pythonにはsetという重複を排除しながらデータを格納できる関数がある．
+  これを用いることで効率的にアクセス元のIPアドレスを出力できる．
+  また，リスト配列とは違ってset関数はハッシュ値を用いてデータを探すため，
+  データの量が増えても検索速度が高速のままであるという長所もある．本実験課題の都合上
+  その仕様が活きることはないが有用である．その他の機能は今までの実験課題で用いた
+  機能を使いまわすだけである．withを用いたファイルの閲覧やjoinを用いた複数データの
+  効率的な出力，sysによるコマンドライン引数の活用等をreモジュールやset関数と組み合わせ本実験課題の題意を満たす．
+
+  \subsubsection{プログラム[3][4]}
+  アイデアに準じたプログラムを以下に示す．
+
+  \begin{figure}[H]
+  \begin{lstlisting}[title={アクセスログからの情報抽出を行うプログラム}]
+    import sys
+    import re
+
+    # IPアドレス抽出用（行頭の数字列）
+    ip_regex = re.compile(r'^(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3})')
+
+    # ログ内の %27 ('), -- (コメント), %3D (=), OR などを検知
+    sqli_regex = re.compile(r"(%27|'|--|%3D|or\s+)")
+
+    input_file = sys.argv[-1]
+
+    total_access = 0
+    unique_ips = set()
+    attacker_ips = set()
+
+    with open(input_file, 'r', encoding='utf-8') as f:
+        for line in f:
+            total_access += 1
+            
+            # IPアドレスの抽出
+            match = ip_regex.match(line)
+
+            if match:
+                ip = match.group(1)
+                unique_ips.add(ip)
+
+            # SQLインジェクションのパターンが含まれるかチェック
+            if sqli_regex.search(line):
+                attacker_ips.add(ip)
+
+    # 結果の出力
+    print("アクセス数：",total_access)
+    print("アクセス元のIPアドレス数：",len(unique_ips))
+    print("攻撃元のIPアドレス：",', '.join(attacker_ips))
+  \end{lstlisting}
+  \end{figure}
+
+  1,2行目はモジュールのインポートを行っている．5,8行目ではreモジュールを用いて
+  正規表現でIPアドレスとSQLインジェクションを検出している．具体的には，IPアドレスは
+  行の先頭にあるため"$\text{\textasciicircum}$ "で先頭の要素に限定し，
+  $\backslash d$(数値)の｛1,3｝(1～3文字のセット)と"."の連結で成り立つと定義した．
+  SQLコマンドインジェクションの検出の方はコード内で説明されている通り特有の記号などを
+  含むかどうかで定義している．10行目はコマンドライン引数の復習でaccess.logを入力する．
+  12行目から14行目は合計アクセス数，アクセスしたIPアドレス，攻撃者のIPアドレスを扱う
+  変数の定義である．2種のIPアドレスはset関数を用いて重複が起こらないようにデータを
+  格納できるようにしている．16行目からのwith文も以前の課題と同様に行ごとのfor文で
+  制御する．18行目では行ごとにアクセスが行われるためfor文が回るたびにアクセス数に1を
+  加算している．21行目のようにip\_regex.match(line)とすることで行ごとのIPアドレスが
+  先に定義したip\_regexに適する値があるかどうかをbool型で得られる．23～29行目では
+  これを用いて2種IPアドレスに定義した正規表現に当てはまるものがあれば変数に追加
+  するという処理を作っている．32,33行目はアクセス数とアクセス元のIPアドレスの出力を
+  行っている．34行目ではSQLコマンドインジェクションを行ったIPアドレスを出力している．
+  また，以下に今回使用したaccess.log(S0414)の中身のある1行を示す．これで最初の要素
+  のみをIPアドレスとして使う理由やIPアドレスの正規表現のロジックを上のようにした理由
+  等が裏付けられる．
+
+  \begin{figure}[H]
+  \begin{lstlisting}[caption={Apacheのログファイルの例},breaklines=true,breakatwhitespace=true]
+    10.4.0.19 - - [14/Nov/2025:09:30:01 +0900] "GET /login.php?id=osaka&pass=1qaz%21QAZ HTTP/1.1" 200 403 "http://10.4.4.0/" "Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0"
+  \end{lstlisting}
+  \end{figure}
+
+  \subsubsection{結果}
+  プログラムk061として上記のプログラムを実行した結果は以下図\ref{k061.pyの実行結果}のようになった．
+  access.logの行数は78行であるため正しい結果が得られている．
+  アクセス元のIPアドレスは班員の7人分あるかと思われたが，確認してみたところ班員の1人
+  (38番)が逆の方のみで作業を行っていた．そのためアクセス元IPアドレス数は6人で
+  間違いない．SQLインジェクションを行っていたIPアドレスも10.4.0.19, 10.4.4.0, 10.4.0.15
+  以外では見つからなかった．そのため本実験課題のプログラムは正しく動いたと言える．
+  実行結果が得られるまでは作成した正規表現が適しているかわからなかったが
+  正しく結果が得られているためこれは今後も活用できると考えられる．
+
+  \begin{figure}[H]
+    \small
+    \begin{center}
+    \begin{screen}
+    \begin{verbatim}
+    > python k061.py access.log
+    アクセス数： 78
+    アクセス元のIPアドレス数： 6
+    攻撃元のIPアドレス： 10.4.0.19, 10.4.4.0, 10.4.0.15
+    \end{verbatim}
+    \end{screen}
+    \end{center} 
+    \caption{k061.pyの実行結果}
+    \label{k061.pyの実行結果}
+  \end{figure}
+
+  \subsection{Python,Excel間の連携}
+  ここでは，Webサーバのアクセスログから「IPアドレスごとのアクセス数」を調べ，第1
+  列をIPアドレス，第2列をアクセス回数とするCSVを出力し，それを元に縦軸をアクセス回
+  数，横軸をIPアドレスとしたグラフを作成するプログラムについて述べる．
+
+  \subsubsection{アイデア[5][6][7]}
+  本実験課題は途中までが前課題と同じ内容である．しかし私が実験時間中にAIを用いて
+  コードを出力させてみたところ，画期的な関数を発見したためこちらを活用し改めて処理を
+  作り直す．用いるのはCounter関数であり，これは何が何個あるか，を数えられるものである．
+  これを用いることでリスト内の重複数を数えながらIPアドレスとその回数のリストでデータを
+  格納しておける．さらに.most\_common()を用いることで値（今回の場合回数）が多い
+  順に並べ替えることができる．これを用いてIPアドレスとその登場回数を効率的に
+  調べ活用する．Excel(csv)についての指導書に指定されている通りopenpyxlを用いる．
+  Excelファイルを作るWorkbook関数や初期シートを指定できるwb.activeコマンドなどを用い
+  Excelにデータを入力していく．
+  最後にopenpyxlに含まれるBarChart関数で棒グラフを作成し操作する．
+  Referenceコマンドで使用するデータや横軸の単位に使う値の範囲指定が行える．
+  add\_dataでデータの追加，set\_categoriesで軸の単位追加，add\_chartコマンドで
+  場所を決めグラフを表示することなどができる．これらを駆使しプログラムを作成する．
+
+  \subsubsection{プログラム}
+  アイデアに基づき作成したプログラムを以下に示す．授業中にAIに作成させたコードを
+  そのまま使ってもよかったが，あまりに冗長（驚異の75行）だったため自分で作り直すことにした．
+
+  \begin{figure}[H]
+  \begin{lstlisting}[title={Python,Excel間の連携プログラム}]
+  import sys, re, openpyxl
+  from collections import Counter
+  from openpyxl.chart import BarChart, Reference
+
+  log_file, out_xlsx = sys.argv[1], sys.argv[2]
+  ip_regex = re.compile(r'^(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3})')
+
+  # 1. IP抽出と集計（Counterで一撃）
+  with open(log_file, 'r', encoding='utf-8') as f:
+      ips = [ip_regex.match(line).group(1) for line in f if ip_regex.match(line)]
+  counts = Counter(ips).most_common() # 多い順のリストが返る
+
+  # 2. Excel書き込み
+  wb = openpyxl.Workbook()
+  ws = wb.active
+  ws.append(["IPアドレス", "アクセス回数"])
+  for row in counts:
+      ws.append(row)
+
+  # 3. グラフ作成
+  chart = BarChart()
+  chart.title = "IPアクセス件数"
+  data = Reference(ws, min_col=2, min_row=1, max_row=len(counts)+1)
+  cats = Reference(ws, min_col=1, min_row=2, max_row=len(counts)+1)
+  chart.add_data(data, titles_from_data=True)
+  chart.set_categories(cats)
+  ws.add_chart(chart, "D2")
+  \end{lstlisting}
+  \end{figure}
+
+  新しい処理ばかりであったためほとんどアイデアで触れてしまったが行ごとに説明していく．
+  1～3行目は恒例のモジュールインポートである．2,3行目で少し違う書き方なのは
+  必要な機能のみをfromに続くモジュールから抜き取っているためである．
+  5行目は何度も行ったコマンドライン引数定義を2つ同時に行っている．この書き方も
+  AIのコードから得られた知識である．
+  6行目は正規表現でここは前実験課題のプログラムと全く同じである．
+  9～10行目は以前に用いているwith文とreモジュールをfor文で回す処理である．これも
+  前と同じ内容だがコンパクトになっている．group(1)部分も今までと同じで
+  matchしているか確認する際に正規表現で定義した()があるか確認しそこでIPアドレスを
+  認識する，というものである．正規表現の方の()を消しgroup(0)とすることで同じように
+  動くが，文字コードによって前後の値が数値化されIPアドレスに接触するなどを危惧し
+  ()でくくっている．これも前実験と同様である，11行目は新発見関数のCounterを用い，
+  登場回数をipsから集計しIPアドレスと一緒にdataの集合として格納している．さらに
+  .most\_common()コマンドを用いることによってソートも同時に行っている．
+  14行目は前述した通りにExcelファイルを開き，15行目も前述した通りに初期位置のシート
+  （セル）を指定している．16行目は指定したところに"IPアドレス"と"アクセス回数"という
+  データの見出しを入力している．この入力では"アクセス回数"がセルの初期位置の1つ右の
+  セルに入力され，指導書の指定通りにデータを格納する準備が整う．17,18行目はCounterで
+  格納されたデータのcountsをfor文で行ごとに入力している．これで指導書の指定通りに
+  データが格納されるはずである．21行目も前述した通りBarChart関数で何も参照していない
+  棒グラフを出力する．22行目で棒グラフのタイトルを決定し，23,24行目も前述した通り
+  Referenceを用いて参照するデータと横軸に使う値の参照範囲を決定している，
+  ここでmin\_row（行）の最初に参照する値の場所が違うのは，数値データの1段目は
+  タイトルとして扱われるという仕様だからである．そのため数値データであるアクセス回数
+  （登場回数）は1行先からデータを選択するのである．
+  25,26行目は指定した範囲のデータと軸に使用する値をグラフに入力している．
+  27行目で仕様が完全になった棒グラフをD2に配置して処理が終了する．
+
+  \subsubsection{結果}
+  本実験課題の結果として，出力されたip.csvのスクリーンショットを図\ref{ip.csv}に示す．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/ip.csv.png}
+    \caption{ip.csv}
+    \label{ip.csv}
+  \end{figure}
+
+  この結果は前課題で確認されたものと等しく，データとグラフの整合性もとれている．
+  以上のことから本実験課題の題意を満たしたと言える．
+
+  \subsection{発展課題}
+  本実験課題では前課題で出力した棒グラフをmatplotlibを用いて出力する．
+
+  \subsubsection{アイデア}
+  アイデア自体は前の実験とおおよそ変わらない．matplotlibを用いてグラフを
+  出力するところのみが前課題と違うが，正直なところリストとして用いていた値を
+  別々にして直でグラフを出す，というところくらいしか違いがない．
+  後はほとんど同じようなコードを参考資料を見ながら書いていく．
+
+  \subsubsection{プログラム}
+  以下にアイデアに即したプログラムを示す．
+
+  \begin{figure}[H]
+  \begin{lstlisting}[title={matplotを用い棒グラフを出力するプログラム}]
+    import sys, re, matplotlib.pyplot as plt
+    from collections import Counter
+
+    ip_regex = re.compile(r'^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})')
+    ips = []
+
+    with open(sys.argv[1], 'r', encoding='utf-8') as f:
+        for line in f:
+            match = ip_regex.match(line)
+            if match:
+                ips.append(match.group(1))
+
+    # 集計
+    counts = Counter(ips).most_common()
+    labels, values = zip(*counts)
+
+    # グラフ作成
+    plt.bar(labels, values)
+    plt.xticks(rotation=45) 
+    plt.tight_layout()
+    plt.show()
+  \end{lstlisting}
+  \end{figure}
+
+  14行目までは前課題と被るため説明は割愛する．
+  15行目はCounterでまとめたcountsをIPアドレスだけの塊と回数だけの塊に分けている．
+  これは前述した通りmatpotlibにそのまま値として参照させるためである．
+  18行目は棒グラフを描画している．引数は順に横軸のデータ，縦軸のデータとなっている．
+  19行目は横軸の見出しであるIPアドレスの文字を45度回転させている．そのままだと
+  文字同士がかぶって大変なことになる（なった）ためである．
+  20行目はグラフのタイトルやラベルがウィンドウ外にはみ出さないようにしている．
+  21行目でグラフを1つのウィンドウとして出力する．
+
+  \subsubsection{結果}
+  プログラムを実行し出力されたウィンドウを図\ref{matplotlib}に示す．
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.99\textwidth]{datas/matplotlib.png}
+    \caption{matplotlibで出力した棒グラフ}
+    \label{matplotlib}
+  \end{figure}
+
+  図\ref{matplotlib}のグラフと図\ref{ip.csv}のグラフの値が等しいため
+  プログラムは正しく動作し課題の題意を満たせたと言える．
 
   \newpage
   \begin{huge}
@@ -794,7 +1057,14 @@
   \end{huge}
   % \noindent[]ページ名，\url{}，2026年01/11参照．\\
   \noindent[1]Pythonでうるう年を判定・カウント・列挙，\url{https://note.nkmk.me/python-calendar-leap-year/}，2026年01/11参照．\\
-  
+  \noindent[2]Python, set型で集合演算（和集合、積集合や部分集合の判定など），\url{https://note.nkmk.me/python-set/}，2026年01/11参照．\\
+  \noindent[3]【Python】正規表現を扱うre モジュール とは？主要メソッドや活用シーンをわかりやすく解説！，\url{https://pythonaiclarifydoubts.com/python-import-re/}，2026年01/11参照．\\
+  \noindent[4]re --- 正規表現操作，\url{https://docs.python.org/ja/3/library/re.html}，2026年01/11参照．\\
+  \noindent[5]PythonのCounterでリストの各要素の出現個数をカウント，\url{https://note.nkmk.me/python-collections-counter/}，2026年01/11参照．\\
+  \noindent[6]PythonでExcel操作を自動化しよう！openpyxl \& pandas (入門編)，\url{https://qiita.com/Yamashita_Sosuke/items/1e4d8a68d4058d1585a8}，2026年01/11参照．\\
+  \noindent[7]PythonとopenpyxlでExcel作業を効率化！BarChart/BarChart3Dを使ったグラフ作成入門，\url{https://tech-compass.jp/python/python%e3%81%a8openpyxl%e3%81%a7excel%e4%bd%9c%e6%a5%ad%e3%82%92%e5%8a%b9%e7%8e%87%e5%8c%96%ef%bc%81barchart-barchart3d%e3%82%92%e4%bd%bf%e3%81%a3%e3%81%9f%e3%82%b0%e3%83%a9%e3%83%95%e4%bd%9c%e6%88%90/}，2026年01/11参照．\\
+  \noindent[8]【Python初心者】Matplotlibの基本的な使い方まとめ，\url{https://qiita.com/gaku-devlog/items/5ccac4c2948dc17b5c4f}，2026年01/11参照．\\
+
   \newpage
   \begin{huge}
     感想\\\\

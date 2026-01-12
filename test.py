@@ -1,28 +1,20 @@
-import sys
+import sys, re, matplotlib.pyplot as plt
+from collections import Counter
 
-output_file = sys.argv[-1]
-input_files = sys.argv[1:-1]
+ip_regex = re.compile(r'^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})')
+ips = []
 
-results = []
+with open(sys.argv[1], 'r', encoding='utf-8') as f:
+    for line in f:
+        match = ip_regex.match(line)
+        if match:
+            ips.append(match.group(1))
 
-for filename in input_files:
-    with open(filename, 'r', encoding='utf-8') as f:
-        lines = f.readlines()
-        
-        l_count = len(lines)
-        w_count = sum(len(line.split()) for line in lines)
-        c_count = sum(len(line) for line in lines)
-        
-        # データの整形
-        results.append(f"file: {filename}")
-        results.append(f"lines: {l_count}")
-        results.append(f"words: {w_count}")
-        results.append(f"chars: {c_count}\n")
+# 集計して上位10件をグラフ化
+counts = Counter(ips).most_common(10)
+labels, values = zip(*counts)
 
-# --- 追加：cmd上への表示とファイル書き込み ---
-output_text = "\n".join(results)
-print(output_text)
-
-# ファイルに保存
-with open(output_file, 'w', encoding='utf-8') as f_out:
-    f_out.write(output_text)
+plt.bar(labels, values)
+plt.xticks(rotation=45) # IPが重ならないよう斜めに
+plt.tight_layout()
+plt.show()

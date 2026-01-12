@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.22.0 (TeX Live 2025)  (format=lualatex 2025.6.15)  11 JAN 2026 23:48
+This is LuaHBTeX, Version 1.22.0 (TeX Live 2025)  (format=lualatex 2025.6.15)  12 JAN 2026 19:45
  restricted system commands enabled.
  file:line:error style messages enabled.
 **c:/Users/takky/Downloads/repo3_6/19_瀧口大地_exp6.tex
@@ -1286,17 +1286,76 @@ Inserting `ltj.process_input_buffer' in `process_input_buffer'.
 Removing  `ltj.listings_unicode' from `process_input_buffer'.
 
 [17]
+Removing  `ltj.process_input_buffer' from `process_input_buffer'.
+Inserting `ltj.listings_unicode' in `process_input_buffer'.
+Inserting `ltj.process_input_buffer' in `process_input_buffer'.
+Removing  `ltj.listings_unicode' from `process_input_buffer'.
 
 [18]
-Overfull \hbox (1.58679pt too wide) in paragraph at lines 793--797
+LaTeX Font Info:    Font shape `JT3/mc/m/n' will be
+(Font)              scaled to size 7.69775pt on input line 848.
+
+
+[19]
+Removing  `ltj.process_input_buffer' from `process_input_buffer'.
+Inserting `ltj.listings_unicode' in `process_input_buffer'.
+Inserting `ltj.process_input_buffer' in `process_input_buffer'.
+Removing  `ltj.listings_unicode' from `process_input_buffer'.
+
+[20]
+Removing  `ltj.process_input_buffer' from `process_input_buffer'.
+Inserting `ltj.listings_unicode' in `process_input_buffer'.
+Inserting `ltj.process_input_buffer' in `process_input_buffer'.
+Overfull \hbox (76.93019pt too wide) in paragraph at lines 932--933
+[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][] 
+ []
+
+Removing  `ltj.listings_unicode' from `process_input_buffer'.
+
+[21]
+
+[22]
+<datas/ip.csv.png, id=82, 596.2275pt x 235.63031pt>
+File: datas/ip.csv.png Graphic file (type png)
+<use datas/ip.csv.png>
+Package luatex.def Info: datas/ip.csv.png  used on input line 986.
+(luatex.def)             Requested size: 450.69417pt x 178.11731pt.
+
+
+[23<./datas/ip.csv.png>]
+Removing  `ltj.process_input_buffer' from `process_input_buffer'.
+Inserting `ltj.listings_unicode' in `process_input_buffer'.
+Inserting `ltj.process_input_buffer' in `process_input_buffer'.
+Removing  `ltj.listings_unicode' from `process_input_buffer'.
+
+[24]
+<datas/matplotlib.png, id=90, 478.78876pt x 406.51875pt>
+File: datas/matplotlib.png Graphic file (type png)
+<use datas/matplotlib.png>
+Package luatex.def Info: datas/matplotlib.png  used on input line 1046.
+(luatex.def)             Requested size: 450.69417pt x 382.66733pt.
+
+
+[25<./datas/matplotlib.png>]
+Overfull \hbox (1.58679pt too wide) in paragraph at lines 1056--1067
 [] \TU/ipaexm.ttf(0)/b/n/12 [1]Python |\JY3/mc/m/n/12 で |う |る |う |年 |を |判 |定 [] |カ |ウ |ン |ト [] |列 |挙 []  $\TU/lmtt/m/n/12 https://note.nkmk.me/python-calendar-
  []
 
 
+Overfull \hbox (29.81935pt too wide) in paragraph at lines 1056--1067
+\TU/lmtt/m/n/12 a7excel%e4%bd%9c%e6%a5%ad%e3%82%92%e5%8a%b9%e7%8e%87%e5%8c%96%ef%bc%81barchart-
+ []
 
-[19]
 
-[20] (./19_瀧口大地_exp6.aux)
+Overfull \hbox (1.71538pt too wide) in paragraph at lines 1056--1067
+\TU/lmtt/m/n/12 barchart3d%e3%82%92%e4%bd%bf%e3%81%a3%e3%81%9f%e3%82%b0%e3%83%a9%e3%83%95%
+ []
+
+
+
+[26]
+
+[27] (./19_瀧口大地_exp6.aux)
  ***********
 LaTeX2e <2025-06-01> patch level 1
 L3 programming layer <2025-05-26>
@@ -1308,19 +1367,19 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 )
 
 Here is how much of LuaTeX's memory you used:
- 13599 strings out of 470203
- 305798,794899 words of node,token memory allocated
+ 13624 strings out of 470203
+ 382249,794899 words of node,token memory allocated
  1247 words of node memory still in use:
    11 hlist, 2 vlist, 5 rule, 1 local_par, 4 glue, 4 kern, 1 penalty, 1 margin_kern, 4 glyph, 258 attribute, 57 glue_spec, 35 attribute_list, 1 write, 14 user_defined nodes
-   avail lists: 1:48,2:79257,3:731,4:4649,5:659,6:107,7:5196,8:47,9:5258,10:40,11:12
- 41614 multiletter control sequences out of 65536+600000
+   avail lists: 1:48,2:103034,3:731,4:5375,5:750,6:107,7:7521,8:232,9:6995,10:40,11:42
+ 41633 multiletter control sequences out of 65536+600000
  61 fonts using 73657519 bytes
- 119i,8n,115p,1829b,913s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<c:/texlive/2025/texmf-dist/fonts/opentype/public/lm/lmmono12-regular.otf><c:/texlive/2025/texmf-dist/fonts/opentype/public/lm/lmmono10-regular.otf><c:/texlive/2025/texmf-dist/fonts/opentype/public/haranoaji/HaranoAjiGothic-Medium.otf><c:/texlive/2025/texmf-dist/fonts/truetype/public/ipaex/ipaexm.ttf><c:/texlive/2025/texmf-dist/fonts/opentype/public/haranoaji/HaranoAjiMincho-Regular.otf><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/latxfont/lcircle1.pfb>
-Output written on 19_瀧口大地_exp6.pdf (21 pages, 309058 bytes).
+ 119i,8n,115p,1829b,915s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<c:/texlive/2025/texmf-dist/fonts/opentype/public/lm/lmmono12-regular.otf><c:/texlive/2025/texmf-dist/fonts/opentype/public/lm/lmmono10-regular.otf><c:/texlive/2025/texmf-dist/fonts/opentype/public/haranoaji/HaranoAjiGothic-Medium.otf><c:/texlive/2025/texmf-dist/fonts/truetype/public/ipaex/ipaexm.ttf><c:/texlive/2025/texmf-dist/fonts/opentype/public/haranoaji/HaranoAjiMincho-Regular.otf><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2025/texmf-dist/fonts/type1/public/amsfonts/latxfont/lcircle1.pfb>
+Output written on 19_瀧口大地_exp6.pdf (28 pages, 401577 bytes).
 
-PDF statistics: 110 PDF objects out of 1000 (max. 8388607)
- 70 compressed objects within 1 object stream
+PDF statistics: 143 PDF objects out of 1000 (max. 8388607)
+ 90 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 131072)
  1 words of extra memory for PDF output out of 10000 (max. 100000000)
 
